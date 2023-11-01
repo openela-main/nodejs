@@ -1,0 +1,20 @@
+FIPS related options cause a segfault, let's end sooner
+
+Upstream report: https://github.com/nodejs/node/pull/48950
+RHBZ: https://bugzilla.redhat.com/show_bug.cgi?id=2226726
+
+This patch makes the part of the code that processes cmd-line options for
+FIPS to end sooner before the code gets to the problematic part of the code.
+
+diff -up node-v18.16.1/src/crypto/crypto_util.cc.origfips node-v18.16.1/src/crypto/crypto_util.cc
+--- node-v18.16.1/src/crypto/crypto_util.cc.origfips	2023-07-31 12:09:46.603683081 +0200
++++ node-v18.16.1/src/crypto/crypto_util.cc	2023-07-31 12:16:16.906617914 +0200
+@@ -111,6 +111,8 @@ bool ProcessFipsOptions() {
+   /* Override FIPS settings in configuration file, if needed. */
+   if (per_process::cli_options->enable_fips_crypto ||
+       per_process::cli_options->force_fips_crypto) {
++      fprintf(stderr, "ERROR: Using options related to FIPS is not recommended, configure FIPS in openssl instead. See https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/security_hardening/assembly_installing-the-system-in-fips-mode_security-hardening for more details.\n");
++      return false;
+ #if OPENSSL_VERSION_MAJOR >= 3
+     OSSL_PROVIDER* fips_provider = OSSL_PROVIDER_load(nullptr, "fips");
+     if (fips_provider == nullptr)
