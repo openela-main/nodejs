@@ -1,6 +1,6 @@
-SOURCES/wasi-sdk-wasi-sdk-11.tar.gz
-SOURCES/wasi-sdk-wasi-sdk-14.tar.gz
-SOURCES/cjs-module-lexer-1.2.2.tar.gz
 SOURCES/icu4c-73_2-src.tgz
 SOURCES/node-v20.8.1-stripped.tar.gz
 SOURCES/undici-5.26.3.tar.gz
+SOURCES/wasi-sdk-wasi-sdk-11.tar.gz
+SOURCES/wasi-sdk-wasi-sdk-14.tar.gz
+SOURCES/cjs-module-lexer-1.2.2.tar.gz
