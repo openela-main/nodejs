@@ -1,6 +1,6 @@
-21688fce2b7ee61a5cbd9527316d3c7a09316d5603e4f188f500e4c785fd5390 SOURCES/cjs-module-lexer-1.2.2.tar.gz
-818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1 SOURCES/icu4c-73_2-src.tgz
-82e2375d4f979bcd9d718ddeea9fe15df0c241a5a250a81521099e61d93762b8 SOURCES/node-v20.8.1-stripped.tar.gz
-2462727364fa08f93521729a681332c07270aff52ccbb7d7a3174de30f17c834 SOURCES/undici-5.26.3.tar.gz
+c8a24f3adee1fabf8a92c33a5e54fa60ded14b1d8fc5dca527573bec24a6a447 SOURCES/undici-5.27.2.tar.gz
 c544979f93a200320af78d539f521f990c5e02e86c40ead45c3406fac404fcc3 SOURCES/wasi-sdk-wasi-sdk-11.tar.gz
-e09c77359f1821517b40d4dbde6fc9b71610c53528651f2f916cdda151e4fbd7 SOURCES/wasi-sdk-wasi-sdk-14.tar.gz
+6866ff1c60a498e24d0ab6bf26576621ff8ce22eecb0008cdd5b336801fb5c72 SOURCES/wasi-sdk-wasi-sdk-16.tar.gz
+2ecb4061ce95f4595dd32805aa2e34281632831d39cde6fced6faefab8ad8305 SOURCES/cjs-module-lexer-1.2.2.tar.gz
+818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1 SOURCES/icu4c-73_2-src.tgz
+1509e79da1d1e518cec2f4b84ad324edb3f8a5bdfd86bcc80d0a49ec39ddcb1a SOURCES/node-v20.11.0-stripped.tar.gz
