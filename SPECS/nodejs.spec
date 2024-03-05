@@ -43,8 +43,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 20
-%global nodejs_minor 8
-%global nodejs_patch 1
+%global nodejs_minor 9
+%global nodejs_patch 0
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -635,6 +635,10 @@ NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/nod
 
 
 %changelog
+* Thu Nov 09 2023 Zuzana Svetlikova <zsvetlik@redhat.com> - 1:20.9.0-1
+- Rebase to LTS
+- Resolves: RHEL-16161
+
 * Wed Oct 18 2023 Zuzana Svetlikova <zsvetlik@redhat.com> - 1:20.8.1-1
 - Update node and nghttp
 - Add fips patch
