@@ -45,7 +45,7 @@
 %global nodejs_epoch 1
 %global nodejs_major 20
 %global nodejs_minor 11
-%global nodejs_patch 0
+%global nodejs_patch 1
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -181,9 +181,9 @@ Source101: cjs-module-lexer-1.2.2.tar.gz
 Source102: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-wasi-sdk-11.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v5.27.2.tar.gz
-# Adjustments: rm -f undici-5.27.2/lib/llhttp/llhttp*.wasm*
-Source111: undici-5.27.2.tar.gz
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v5.28.3.tar.gz
+# Adjustments: rm -f undici-5.28.3/lib/llhttp/llhttp*.wasm*
+Source111: undici-5.28.3.tar.gz
 # The WASM blob was made using wasi-sdk v16; compiler libraries are linked in.
 # Version source: deps/undici/src/lib/llhttp/wasm_build_env.txt
 # Also check (undici tarball): lib/llhttp/wasm_build_env.txt
@@ -434,7 +434,7 @@ export CFLAGS="%{optflags} ${extra_cflags[*]}" CXXFLAGS="%{optflags} ${extra_cfl
 export LDFLAGS="%{build_ldflags}"
 
 %{__python3} configure.py --prefix=%{_prefix} --verbose \
-           --shared-openssl \
+           --shared-openssl --openssl-conf-name=openssl_conf \
            --shared-zlib \
            --shared-brotli \
            %{!?with_bundled:--shared-libuv} \
@@ -722,6 +722,10 @@ end
 
 
 %changelog
+* Wed Feb 21 2024 Lukas Javorsky <ljavorsk@redhat.com> - 1:20.11.1-1
+- Rebase to version 20.11.1
+- Resolves: RHEL-26017 RHEL-26266 RHEL-26685 RHEL-26686 RHEL-26004 RHEL-26596 RHEL-26688
+
 * Fri Jan 19 2024 Lukas Javorsky <ljavorsk@redhat.com> - 1:20.11.0-1
 - Rebase to version 20.11.0
 - Resolves: RHEL-21435
