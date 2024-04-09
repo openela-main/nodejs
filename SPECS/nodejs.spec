@@ -44,7 +44,7 @@
 %global nodejs_epoch 1
 %global nodejs_major 20
 %global nodejs_minor 11
-%global nodejs_patch 0
+%global nodejs_patch 1
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -180,10 +180,10 @@ Source101: cjs-module-lexer-1.2.2.tar.gz
 Source111: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-11.0-linux.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v5.27.2.tar.gz
-# Adjustments: rm -f undici-5.27.2/lib/llhttp/llhttp*.wasm
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v5.28.3.tar.gz
+# Adjustments: rm -f undici-5.28.3/lib/llhttp/llhttp*.wasm*
 # wasi-sdk version can be found in lib/llhttp/wasm_build_env.txt
-Source102: undici-5.27.2.tar.gz
+Source102: undici-5.28.3.tar.gz
 Source112: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-16/wasi-sdk-16.0-linux.tar.gz
 
 # Disable running gyp on bundled deps we don't use
@@ -424,7 +424,7 @@ export CFLAGS="%{optflags} ${extra_cflags[*]}" CXXFLAGS="%{optflags} ${extra_cfl
 export LDFLAGS="%{build_ldflags}"
 
 %{__python3} configure.py --prefix=%{_prefix} --verbose \
-           --shared-openssl \
+           --shared-openssl --openssl-conf-name=openssl_conf \
            --shared-zlib \
            --shared-brotli \
            %{!?with_bundled:--shared-libuv} \
@@ -634,6 +634,10 @@ NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/nod
 
 
 %changelog
+* Thu Feb 29 2024 Lukas Javorsky <ljavorsk@redhat.com> - 1:20.11.1-1
+- Rebase to version 20.11.1
+- Resolves: RHEL-26694 RHEL-26684 RHEL-26687 RHEL-26010 RHEL-26597 RHEL-26689 RHEL-26022
+
 * Fri Jan 12 2024 Jan Staněk <jstanek@redhat.com> - 1:20.11.0-1
 - Rebase to version 20.11.0
   Resolves: RHEL-21189
