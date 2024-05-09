@@ -33,7 +33,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 1
+%global baserelease 2
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -44,8 +44,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 20
-%global nodejs_minor 11
-%global nodejs_patch 1
+%global nodejs_minor 12
+%global nodejs_patch 2
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -69,16 +69,16 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.20.1
+%global c_ares_version 1.27.0
 
 # llhttp - from deps/llhttp/include/llhttp.h
-%global llhttp_version 8.1.1
+%global llhttp_version 8.1.2
 
 # libuv - from deps/uv/include/uv/version.h
 %global libuv_version 1.46.0
 
 # nghttp2 - from deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%global nghttp2_version 1.58.0
+%global nghttp2_version 1.60.0
 
 # nghttp3 - from deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
 %global nghttp3_version 0.7.0
@@ -87,7 +87,7 @@
 %global ngtcp2_version 0.8.1
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 73
+%global icu_major 74
 %global icu_minor 2
 %global icu_version %{icu_major}.%{icu_minor}
 
@@ -106,10 +106,10 @@
 %endif
 
 # simduft from deps/simdutf/simdutf.h
-%global simduft_version 4.0.4
+%global simduft_version 4.0.8
 
 # ada from deps/ada/ada.h
-%global ada_version 2.7.4
+%global ada_version 2.7.6
 
 # OpenSSL minimum version
 %global openssl_minimum 1:1.1.1
@@ -122,7 +122,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.2.4
+%global npm_version 10.5.0
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -132,10 +132,10 @@
 
 # Node.js 16.9.1 and later comes with an experimental package management tool
 # corepack - from deps/corepack/package.json
-%global corepack_version 0.23.0
+%global corepack_version 0.25.2
 
 # uvwasi - from deps/uvwasi/include/uvwasi.h
-%global uvwasi_version 0.0.19
+%global uvwasi_version 0.0.20
 
 # histogram_c - from deps/histogram/include/hdr/hdr_histogram_version.h
 %global histogram_version 0.11.8
@@ -182,8 +182,8 @@ Source102: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-
 
 # Version: jq '.version' deps/undici/src/package.json
 # Original: https://github.com/nodejs/undici/archive/refs/tags/v5.28.3.tar.gz
-# Adjustments: rm -f undici-5.28.3/lib/llhttp/llhttp*.wasm*
-Source111: undici-5.28.3.tar.gz
+# Adjustments: rm -f undici-5.28.4/lib/llhttp/llhttp*.wasm*
+Source111: undici-5.28.4.tar.gz
 # The WASM blob was made using wasi-sdk v16; compiler libraries are linked in.
 # Version source: deps/undici/src/lib/llhttp/wasm_build_env.txt
 # Also check (undici tarball): lib/llhttp/wasm_build_env.txt
@@ -191,7 +191,9 @@ Source112: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-16/wasi-sdk-
 
 # Disable running gyp on bundled deps we don't use
 Patch1: 0001-Disable-running-gyp-on-shared-deps.patch
-Patch3: nodejs-fips-disable-options.patch
+Patch2: 0002-Disable-FIPS-options.patch
+Patch3: 0003-Limit-CONTINUATION-frames-following-an-incoming-HEAD.patch
+Patch4: 0004-Add-nghttp2_option_set_max_continuations.patch
 
 BuildRequires: make
 BuildRequires: python3-devel
@@ -485,7 +487,7 @@ popd # deps
 %install
 rm -rf %{buildroot}
 
-./tools/install.py install %{buildroot} %{_prefix}
+./tools/install.py install --dest-dir=%{buildroot} --prefix=%{_prefix}
 
 # Set the binary permissions properly
 chmod 0755 %{buildroot}/%{_bindir}/node
@@ -722,6 +724,14 @@ end
 
 
 %changelog
+* Tue Apr 16 2024 Jan Staněk <jstanek@redhat.com> - 1:20.12.2-2
+- Backport nghttp2 patch for CVE-2024-28182
+
+* Tue Apr 16 2024 Jan Staněk <jstanek@redhat.com> - 1:20.12.2-1
+- Rebase to version 20.12.0
+  Fixes: CVE-2024-27983 CVE-2024-27982 CVE-2024-22025 (node)
+  Fixes: CVE-2024-25629 (c-ares)
+
 * Wed Feb 21 2024 Lukas Javorsky <ljavorsk@redhat.com> - 1:20.11.1-1
 - Rebase to version 20.11.1
 - Resolves: RHEL-26017 RHEL-26266 RHEL-26685 RHEL-26686 RHEL-26004 RHEL-26596 RHEL-26688

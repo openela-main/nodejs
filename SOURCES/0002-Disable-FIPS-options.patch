@@ -1,4 +1,4 @@
-From 98738d27288bd9ca634e29181ef665e812e7bbd3 Mon Sep 17 00:00:00 2001
+From 4caaf9c19d3c058f5b89ecd9fc721ee49370651a Mon Sep 17 00:00:00 2001
 From: Michael Dawson <midawson@redhat.com>
 Date: Fri, 23 Feb 2024 13:43:56 +0100
 Subject: [PATCH] Disable FIPS options
@@ -23,7 +23,7 @@ Signed-off-by: rpm-build <rpm-build>
  3 files changed, 18 insertions(+)
 
 diff --git a/lib/crypto.js b/lib/crypto.js
-index 41adecc..b2627ac 100644
+index 1216f3a..fbfcb26 100644
 --- a/lib/crypto.js
 +++ b/lib/crypto.js
 @@ -36,6 +36,9 @@ const {
@@ -36,7 +36,7 @@ index 41adecc..b2627ac 100644
    ERR_CRYPTO_FIPS_FORCED,
    ERR_WORKER_UNSUPPORTED_OPERATION,
  } = require('internal/errors').codes;
-@@ -251,6 +254,13 @@ function getFips() {
+@@ -253,6 +256,13 @@ function getFips() {
  }
  
  function setFips(val) {
@@ -51,10 +51,10 @@ index 41adecc..b2627ac 100644
      if (val) return;
      throw new ERR_CRYPTO_FIPS_FORCED();
 diff --git a/lib/internal/errors.js b/lib/internal/errors.js
-index a722360..04d8a53 100644
+index def4949..580ca7a 100644
 --- a/lib/internal/errors.js
 +++ b/lib/internal/errors.js
-@@ -1060,6 +1060,12 @@ module.exports = {
+@@ -1112,6 +1112,12 @@ module.exports = {
  //
  // Note: Node.js specific errors must begin with the prefix ERR_
  
@@ -81,4 +81,5 @@ index 5734d8f..ef9d1b1 100644
      OSSL_PROVIDER* fips_provider = OSSL_PROVIDER_load(nullptr, "fips");
      if (fips_provider == nullptr)
 -- 
-2.43.2
+2.44.0
+
