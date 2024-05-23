@@ -1,0 +1,42 @@
+From 2df9af7073929ab94b6dda040df08bc3ff7d8ab1 Mon Sep 17 00:00:00 2001
+From: RafaelGSS <rafael.nunu@hotmail.com>
+Date: Tue, 26 Mar 2024 15:55:13 -0300
+Subject: [PATCH] src: ensure to close stream when destroying session
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Anna Henningsen <anna@addaleax.net>
+PR-URL: https://github.com/nodejs-private/node-private/pull/561
+Fixes: https://hackerone.com/reports/2319584
+Reviewed-By: Michael Dawson <midawson@redhat.com>
+Reviewed-By: Marco Ippolito <marcoippolito54@gmail.com>
+Reviewed-By: Matteo Collina <matteo.collina@gmail.com>
+Reviewed-By: Benjamin Gruenbaum <benjamingr@gmail.com>
+CVE-ID: CVE-2024-27983
+Signed-off-by: Jan Staněk <jstanek@redhat.com>
+Signed-off-by: rpm-build <rpm-build>
+---
+ src/node_http2.cc | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/node_http2.cc b/src/node_http2.cc
+index 53216dc..9a6d63d 100644
+--- a/src/node_http2.cc
++++ b/src/node_http2.cc
+@@ -529,6 +529,12 @@ Http2Session::Http2Session(Http2State* http2_state,
+ Http2Session::~Http2Session() {
+   CHECK(!is_in_scope());
+   Debug(this, "freeing nghttp2 session");
++  // Ensure that all `Http2Stream` instances and the memory they hold
++  // on to are destroyed before the nghttp2 session is.
++  for (const auto& [id, stream] : streams_) {
++    stream->Detach();
++  }
++  streams_.clear();
+   // Explicitly reset session_ so the subsequent
+   // current_nghttp2_memory_ check passes.
+   session_.reset();
+-- 
+2.44.0
+
