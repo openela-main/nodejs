@@ -32,7 +32,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 2
+%global baserelease 1
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -43,8 +43,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 20
-%global nodejs_minor 12
-%global nodejs_patch 2
+%global nodejs_minor 14
+%global nodejs_patch 0
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -68,7 +68,7 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.27.0
+%global c_ares_version 1.28.1
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 8.1.2
@@ -77,17 +77,17 @@
 %global libuv_version 1.46.0
 
 # nghttp2 - from deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%global nghttp2_version 1.60.0
+%global nghttp2_version 1.61.0
 
 # nghttp3 - from deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
 %global nghttp3_version 0.7.0
 
 # ngtcp2 from deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
-%global ngtcp2_version 0.8.1
+%global ngtcp2_version 1.1.0
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 74
-%global icu_minor 2
+%global icu_major 75
+%global icu_minor 1
 %global icu_version %{icu_major}.%{icu_minor}
 
 %global icudatadir %{nodejs_datadir}/icudata
@@ -105,10 +105,10 @@
 %endif
 
 # simduft from deps/simdutf/simdutf.h
-%global simduft_version 4.0.8
+%global simduft_version 5.2.8
 
 # ada from deps/ada/ada.h
-%global ada_version 2.7.6
+%global ada_version 2.7.8
 
 # OpenSSL minimum version
 %global openssl_minimum 1:1.1.1
@@ -121,7 +121,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.5.0
+%global npm_version 10.7.0
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -131,10 +131,10 @@
 
 # Node.js 16.9.1 and later comes with an experimental package management tool
 # corepack - from deps/corepack/package.json
-%global corepack_version 0.25.2
+%global corepack_version 0.28.1
 
 # uvwasi - from deps/uvwasi/include/uvwasi.h
-%global uvwasi_version 0.0.20
+%global uvwasi_version 0.0.21
 
 # histogram_c - from deps/histogram/include/hdr/hdr_histogram_version.h
 %global histogram_version 0.11.8
@@ -180,17 +180,15 @@ Source101: cjs-module-lexer-1.2.2.tar.gz
 Source111: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-11.0-linux.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v5.28.3.tar.gz
-# Adjustments: rm -f undici-5.28.3/lib/llhttp/llhttp*.wasm
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.13.0.tar.gz
+# Adjustments: rm -f undici-6.13.0/lib/llhttp/llhttp*.wasm
 # wasi-sdk version can be found in lib/llhttp/wasm_build_env.txt
-Source102: undici-5.28.4.tar.gz
+Source102: undici-6.13.0.tar.gz
 Source112: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-16/wasi-sdk-16.0-linux.tar.gz
 
 # Disable running gyp on bundled deps we don't use
 Patch1: 0001-Disable-running-gyp-on-shared-deps.patch
 Patch2: 0002-Disable-FIPS-options.patch
-Patch3: 0003-Limit-CONTINUATION-frames-following-an-incoming-HEAD.patch
-Patch4: 0004-Add-nghttp2_option_set_max_continuations.patch
 
 BuildRequires: make
 BuildRequires: python3-devel
@@ -636,6 +634,9 @@ NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/nod
 
 
 %changelog
+* Tue Jun 11 2024 Jan Staněk <jstanek@redhat.com> - 1:20.14.0-1
+- Update to version 20.14.0
+
 * Tue Apr 16 2024 Jan Staněk <jstanek@redhat.com> - 1:20.12.2-2
 - Backport nghttp2 patch for CVE-2024-28182
 
