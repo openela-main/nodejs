@@ -1,0 +1,57 @@
+gcc available in RHEL-8 does not know -mbranch-protection option and since
+it was introduced for cross-compilation purposes in nodejs upstream, it seems
+to be save to revert the upstream patch.
+
+Revert "build: fix arm64 cross-compilation bug on non-arm machines"
+This reverts upstream commit 6826bbf26755b144a478e51fd0a7dc83aa0c65b8.
+
+Revert "build: fix arm64 cross-compilation"
+This reverts upstream commit 297368a1edc48d2bedc58c75f1857276bdcdd578.
+---
+ configure.py |  2 ++
+ node.gyp     | 15 ---------------
+ 2 files changed, 2 insertions(+), 15 deletions(-)
+
+diff --git a/configure.py b/configure.py
+index f189ba2bf09..9b2d993bb32 100755
+--- a/configure.py
++++ b/configure.py
+@@ -1344,7 +1344,9 @@ def configure_node(o):
+ 
+   o['variables']['want_separate_host_toolset'] = int(cross_compiling)
+ 
++  # Enable branch protection for arm64
+   if target_arch == 'arm64':
++    o['cflags']+=['-msign-return-address=all']
+     o['variables']['arm_fpu'] = options.arm_fpu or 'neon'
+ 
+   if options.node_snapshot_main is not None:
+diff --git a/node.gyp b/node.gyp
+index ff59af6ff76..7d9ec812917 100644
+--- a/node.gyp
++++ b/node.gyp
+@@ -468,21 +468,6 @@
+     },
+ 
+     'conditions': [
+-      # Pointer authentication for ARM64.
+-      ['target_arch=="arm64"', {
+-          'target_conditions': [
+-              ['_toolset=="host"', {
+-                  'conditions': [
+-                      ['host_arch=="arm64"', {
+-                          'cflags': ['-mbranch-protection=standard'],
+-                      }],
+-                  ],
+-              }],
+-              ['_toolset=="target"', {
+-                  'cflags': ['-mbranch-protection=standard'],
+-              }],
+-          ],
+-      }],
+       ['OS in "aix os400"', {
+         'ldflags': [
+           '-Wl,-bnoerrmsg',
+-- 
+2.45.2
+
