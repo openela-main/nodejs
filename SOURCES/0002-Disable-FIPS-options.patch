@@ -50,9 +50,8 @@ index 1216f3a..fbfcb26 100644
      if (val) return;
      throw new ERR_CRYPTO_FIPS_FORCED();
 diff --git a/lib/internal/errors.js b/lib/internal/errors.js
-index def4949..580ca7a 100644
---- a/lib/internal/errors.js
-+++ b/lib/internal/errors.js
+--- a/lib/internal/errors.js.patch0002	2024-08-07 15:29:09.366357433 +0200
++++ b/lib/internal/errors.js	2024-08-07 15:29:14.392366591 +0200
 @@ -1112,6 +1112,12 @@ module.exports = {
  //
  // Note: Node.js specific errors must begin with the prefix ERR_
@@ -64,8 +63,8 @@ index def4949..580ca7a 100644
 +  Error);
 +
  E('ERR_ACCESS_DENIED',
-   'Access to this API has been restricted. Permission: %s',
-   Error);
+   function(msg, permission = '', resource = '') {
+     this.permission = permission;
 diff --git a/src/crypto/crypto_util.cc b/src/crypto/crypto_util.cc
 index 5734d8f..ef9d1b1 100644
 --- a/src/crypto/crypto_util.cc

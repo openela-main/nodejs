@@ -43,7 +43,7 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 20
-%global nodejs_minor 14
+%global nodejs_minor 16
 %global nodejs_patch 0
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
@@ -68,7 +68,7 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.28.1
+%global c_ares_version 1.31.0
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 8.1.2
@@ -108,7 +108,7 @@
 %global simduft_version 5.2.8
 
 # ada from deps/ada/ada.h
-%global ada_version 2.7.8
+%global ada_version 2.8.0
 
 # OpenSSL minimum version
 %global openssl_minimum 1:1.1.1
@@ -121,7 +121,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.7.0
+%global npm_version 10.8.1
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -183,7 +183,7 @@ Source111: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-
 # Original: https://github.com/nodejs/undici/archive/refs/tags/v6.13.0.tar.gz
 # Adjustments: rm -f undici-6.13.0/lib/llhttp/llhttp*.wasm
 # wasi-sdk version can be found in lib/llhttp/wasm_build_env.txt
-Source102: undici-6.13.0.tar.gz
+Source102: undici-6.19.2.tar.gz
 Source112: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-16/wasi-sdk-16.0-linux.tar.gz
 
 # Disable running gyp on bundled deps we don't use
@@ -634,6 +634,10 @@ NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/nod
 
 
 %changelog
+* Mon Aug 05 2024 Honza Horak <hhorak@redhat.com> - 1:20.16.0-1
+- Update to 20.16.0
+  Fixes: CVE-2024-36137 CVE-2024-22018 CVE-2024-22020
+
 * Tue Jun 11 2024 Jan Staněk <jstanek@redhat.com> - 1:20.14.0-1
 - Update to version 20.14.0
 
