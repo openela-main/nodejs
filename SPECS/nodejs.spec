@@ -32,6 +32,9 @@
 %bcond_with bundled_zlib
 %endif
 
+# System SQLite is too old in any RHEL <= 10
+%bcond_without bundled_sqlite
+
 # LTO is currently broken on Node.js builds
 %define _lto_cflags %{nil}
 
@@ -43,7 +46,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 4
+%global baserelease 1
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -54,8 +57,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 4
-%global nodejs_patch 1
+%global nodejs_minor 11
+%global nodejs_patch 0
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
 %global nodejs_abi %{nodejs_soversion}
@@ -82,7 +85,7 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.31.0
+%global c_ares_version 1.33.1
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 9.2.1
@@ -91,7 +94,7 @@
 %global libuv_version 1.48.0
 
 # nghttp2 - from deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%global nghttp2_version 1.62.1
+%global nghttp2_version 1.63.0
 
 # nghttp3 - from deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
 %global nghttp3_version 0.7.0
@@ -109,7 +112,7 @@
 # " this line just fixes syntax highlighting for vim that is confused by the above and continues literal
 
 # simdutf from deps/simdutf/simdutf.h
-%global simdutf_version 5.2.8
+%global simdutf_version 5.5.0
 
 # OpenSSL minimum version
 %global openssl11_minimum 1:1.1.1
@@ -122,7 +125,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.8.1
+%global npm_version 10.9.0
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -136,7 +139,10 @@
 %global uvwasi_version 0.0.21
 
 # histogram_c - assumed from timestamps
-%global histogram_version 0.9.7
+%global histogram_version 0.11.8
+
+# sqlite - from deps/sqlite/sqlite3.h
+%global sqlite_version 3.46.1
 
 
 Name: nodejs
@@ -160,12 +166,13 @@ Source2: btest402.js
 # The binary data that icu-small can use to get icu-full capability
 Source3: https://github.com/unicode-org/icu/releases/download/release-%{icu_major}-%{icu_minor}/icu4c-%{icu_major}_%{icu_minor}-data-bin-b.zip
 Source4: https://github.com/unicode-org/icu/releases/download/release-%{icu_major}-%{icu_minor}/icu4c-%{icu_major}_%{icu_minor}-data-bin-l.zip
-Source200: nodejs-sources.sh
+Source200: nodejs-tarball.sh
 Source201: npmrc.builtin.in
 Source202: nodejs.pc.in
 Source203: v8.pc.in
 
 Patch: 0001-Remove-unused-OpenSSL-config.patch
+Patch: 0002-deps-ncrypto-include-openssl-rand.h.patch
 
 %global pkgname nodejs
 
@@ -331,6 +338,11 @@ BuildRequires: nodejs-undici
 Requires: nodejs-undici
 %endif
 
+%if %{with bundled_sqlite}
+Provides: bundled(sqlite) = %{sqlite_version}
+%else
+BuildRequires: pkgconfig(sqlite3) >= 3.45
+%endif
 
 
 
@@ -409,7 +421,7 @@ package to save space if non-English locales are not needed.
 Summary: v8 - development headers
 Epoch: %{v8_epoch}
 Version: %{v8_version}
-Release: %{v8_release}
+Release: %{v8_release}%{?dist}
 Requires: %{pkgname}-devel%{?_isa} = %{nodejs_envr}
 Requires: %{pkgname}-libs%{?_isa} = %{nodejs_envr}
 Provides: v8-devel = %{v8_epoch}:%{v8_version}-%{v8_release}
@@ -488,6 +500,10 @@ rm -rf deps/cjs-module-lexer
 rm -rf deps/undici
 %endif
 
+%if %{without bundled_sqlite}
+rm -rf deps/sqlite
+%endif
+
 # Replace any instances of unversioned python with python3
 pfiles=( $(grep -rl python) )
 %py3_shebang_fix ${pfiles[@]}
@@ -551,6 +567,7 @@ export PATH="${cwd}/.bin:$PATH"
            %{!?with_bundled_undici:--shared-builtin-undici/undici-path %{nodejs_private_sitelib}/undici/loader.js} \
            --shared-brotli \
            %{!?with_bundled_libuv:--shared-libuv} \
+           %{!?with_bundled_sqlite:--shared-sqlite} \
            --with-intl=small-icu \
            --with-icu-default-data-dir=%{icudatadir} \
            --without-corepack \
@@ -878,5 +895,8 @@ end
 
 
 %changelog
+* Mon Nov 04 2024 Jan Staněk <jstanek@redhat.com> - 1:22.11.0-1
+- Update to version 22.11.0
+
 * Thu Aug 15 2024 Filip Janus <fjanus@redhat.com> - 22.4.1-4
 - Initial import of nodeJS 22
