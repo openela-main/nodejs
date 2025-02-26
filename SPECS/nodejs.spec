@@ -78,8 +78,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 11
-%global nodejs_patch 0
+%global nodejs_minor 13
+%global nodejs_patch 1
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
 %global nodejs_abi %{nodejs_soversion}
@@ -106,25 +106,25 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.33.1
+%global c_ares_version 1.34.4
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 9.2.1
 
 # libuv - from deps/uv/include/uv/version.h
-%global libuv_version 1.48.0
+%global libuv_version 1.49.2
 
 # nghttp2 - from deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%global nghttp2_version 1.63.0
+%global nghttp2_version 1.64.0
 
 # nghttp3 - from deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
-%global nghttp3_version 0.7.0
+%global nghttp3_version 1.6.0
 
 # ngtcp2 from deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
-%global ngtcp2_version 1.3.0
+%global ngtcp2_version 1.9.1
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 75
+%global icu_major 76
 %global icu_minor 1
 %global icu_version %{icu_major}.%{icu_minor}
 
@@ -133,7 +133,7 @@
 # " this line just fixes syntax highlighting for vim that is confused by the above and continues literal
 
 # simdutf from deps/simdutf/simdutf.h
-%global simdutf_version 5.5.0
+%global simdutf_version 5.6.4
 
 # OpenSSL minimum version
 %global openssl11_minimum 1:1.1.1
@@ -146,7 +146,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.9.0
+%global npm_version 10.9.2
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -163,7 +163,7 @@
 %global histogram_version 0.11.8
 
 # sqlite - from deps/sqlite/sqlite3.h
-%global sqlite_version 3.46.1
+%global sqlite_version 3.47.2
 
 
 Name: nodejs
@@ -200,24 +200,23 @@ Source103: v8.pc.in
 # Recipes for creating these blobs are included in the sources.
 
 # Version: jq '.version' deps/cjs-module-lexer/package.json
-# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/1.2.2.tar.gz
-# Adjustments: rm -f cjs-module-lexer-1.2.2/lib/lexer.wasm
-Source201: cjs-module-lexer-1.2.2.tar.gz
+# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/1.4.1.tar.gz
+# Adjustments: rm -f cjs-module-lexer-1.4.1/lib/lexer.wasm
+Source201: cjs-module-lexer-1.4.1.tar.gz
 # The WASM blob was made using wasi-sdk v11; compiler libraries are linked in.
 # Version source (cjs-module-lexer tarball): Makefile
-Source202: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-wasi-sdk-11.tar.gz
+Source202: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-12/wasi-sdk-wasi-sdk-12.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.19.2.tar.gz
-# Adjustments: rm -f undici-6.19.2/lib/llhttp/llhttp*.wasm*
-Source211: undici-6.19.2.tar.gz
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.21.1.tar.gz
+# Adjustments: rm -f undici-6.21.1/lib/llhttp/llhttp*wasm*
+Source211: undici-6.21.1.tar.gz
 # The WASM blob was made using wasi-sdk v16; compiler libraries are linked in.
 # Version source: deps/undici/src/lib/llhttp/wasm_build_env.txt
 # Also check (undici tarball): lib/llhttp/wasm_build_env.txt
-Source212: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-16/wasi-sdk-wasi-sdk-16.tar.gz
+Source212: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-20/wasi-sdk-wasi-sdk-20.tar.gz
 
 Patch1: 0001-Remove-unused-OpenSSL-config.patch
-Patch2: 0002-deps-ncrypto-include-openssl-rand.h.patch
 
 %global pkgname nodejs
 
@@ -949,6 +948,11 @@ end
 
 
 %changelog
+* Thu Jan 30 2025 Jan Staněk <jstanek@redhat.com> - 22.13.1-1
+- Upgrade to version 22.13.1
+  Fixes CVE-2025-23083 CVE-2025-23085 CVE-2025-22150
+  Resolves: RHEL-76362 RHEL-76897
+
 * Thu Nov 14 2024 Jarek Prokop <jprokop@redhat.com> - 22.11.0-1
 - Upgrade to nodejs 22.11.0.
   Resolves: RHEL-35991
