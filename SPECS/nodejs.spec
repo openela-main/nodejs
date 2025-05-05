@@ -67,7 +67,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 2
+%global baserelease 1
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -78,8 +78,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 13
-%global nodejs_patch 1
+%global nodejs_minor 15
+%global nodejs_patch 0
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
 %global nodejs_abi %{nodejs_soversion}
@@ -106,7 +106,7 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.34.4
+%global c_ares_version 1.34.5
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 9.2.1
@@ -121,7 +121,7 @@
 %global nghttp3_version 1.6.0
 
 # ngtcp2 from deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
-%global ngtcp2_version 1.9.1
+%global ngtcp2_version 1.11.0
 
 # ICU - from tools/icu/current_ver.dep
 %global icu_major 76
@@ -133,7 +133,7 @@
 # " this line just fixes syntax highlighting for vim that is confused by the above and continues literal
 
 # simdutf from deps/simdutf/simdutf.h
-%global simdutf_version 5.6.4
+%global simdutf_version 6.0.3
 
 # OpenSSL minimum version
 %global openssl11_minimum 1:1.1.1
@@ -163,7 +163,7 @@
 %global histogram_version 0.11.8
 
 # sqlite - from deps/sqlite/sqlite3.h
-%global sqlite_version 3.47.2
+%global sqlite_version 3.49.1
 
 
 Name: nodejs
@@ -200,22 +200,23 @@ Source103: v8.pc.in
 # Recipes for creating these blobs are included in the sources.
 
 # Version: jq '.version' deps/cjs-module-lexer/package.json
-# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/1.4.1.tar.gz
-# Adjustments: rm -f cjs-module-lexer-1.4.1/lib/lexer.wasm
-Source201: cjs-module-lexer-1.4.1.tar.gz
+# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/2.1.0.tar.gz
+# Adjustments: rm -f cjs-module-lexer-2.1.0/lib/lexer.wasm
+Source201: cjs-module-lexer-2.1.0.tar.gz
 # The WASM blob was made using wasi-sdk v11; compiler libraries are linked in.
 # Version source (cjs-module-lexer tarball): Makefile
 Source202: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-12/wasi-sdk-wasi-sdk-12.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.21.1.tar.gz
-# Adjustments: rm -f undici-6.21.1/lib/llhttp/llhttp*wasm*
-Source211: undici-6.21.1.tar.gz
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.21.2.tar.gz
+# Adjustments: rm -f undici-6.21.2/lib/llhttp/llhttp*wasm*
+Source211: undici-6.21.2.tar.gz
 # The WASM blob was made using wasi-sdk v16; compiler libraries are linked in.
 # Version source: deps/undici/src/lib/llhttp/wasm_build_env.txt
 # Also check (undici tarball): lib/llhttp/wasm_build_env.txt
 Source212: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-20/wasi-sdk-wasi-sdk-20.tar.gz
-
+Source300: test-runner.sh
+Source301: test-should-pass.txt
 Patch1: 0001-Remove-unused-OpenSSL-config.patch
 
 %global pkgname nodejs
@@ -365,7 +366,7 @@ Provides: bundled(simdutf) = %{simdutf_version}
 
 # Upstream has added a new URL parser that has no option to build as a shared
 # library (19.7.0+)
-Provides: bundled(ada) = 2.8.0
+Provides: bundled(ada) = 2.9.2
 
 
 # undici and cjs-module-lexer ship with pre-built WASM binaries.
@@ -820,6 +821,13 @@ sed -e 's#@PREFIX@#%{_prefix}#g' \
 
 
 %check
+#run unit test that should pass from list
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
+  bash %{SOURCE300} \
+       %{buildroot}/%{_bindir}/node-%{nodejs_pkg_major} \
+       %{_builddir}/node-v%{nodejs_version}/test/ \
+       %{SOURCE301}
+
 # Fail the build if the versions don't match
 LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}/%{_bindir}/node-%{nodejs_pkg_major} -e "require('assert').equal(process.versions.node, '%{nodejs_version}')"
 LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}/%{_bindir}/node-%{nodejs_pkg_major} -e "require('assert').equal(process.versions.v8.replace(/-node\.\d+$/, ''), '%{v8_version}')"
@@ -940,6 +948,18 @@ end
 
 
 %changelog
+* Thu Apr 24 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.15.0-1
+- Update to 22.15.0
+- Drop upstream patches
+
+* Tue Apr 22 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.13.1-4
+- Patch fix for sqlite CVE-2025-31498
+  Resolves: RHEL-87300
+
+* Mon Apr 14 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.13.1-3
+- Update c-ares to newest version with fix for CVE-2025-31498
+  Resolves: RHEL-86581
+
 * Tue Mar 04 2025 Andrei Radchenko <aradchen@redhat.com> - 1:22.13.1-2
 - Remove obsolete lua pretransaction script from spec file
   Resolves: RHEL-81117 RHEL-71410
