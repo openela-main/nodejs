@@ -46,7 +46,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 1
+%global baserelease 2
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -780,6 +780,15 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}%{_bindir}/node-%{nodejs_pkg_
 # Make sure i18n support is working
 NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{nodejs_private_sitelib}/npm/node_modules LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}/%{_bindir}/node-%{nodejs_pkg_major} --icu-data-dir=%{buildroot}%{icudatadir} %{SOURCE2}
 
+# Ensure npm's update notifier has been disabled
+# Temporarily wrapped. As of 4.3.2025 %nodejs_default is always set so should be okay.
+# Will be unwrapped once we get rid of %nodejs_default confusion in rhel.
+%if 0%{nodejs_default}
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
+%{buildroot}%{_bindir}/node \
+%{buildroot}%{_bindir}/npm \
+--globalconfig=%{buildroot}$(LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}%{_bindir}/node %{buildroot}%{_bindir}/npm config get globalconfig) config ls -l --json | jq -e '.["update-notifier"] == false'
+%endif
 
 %if 0%{?rhel} && 0%{?rhel} < 8
 %pretrans %{pkgname}-npm -p <lua>
@@ -796,23 +805,6 @@ if d_st then
   end
 end
 %endif
-
-# This can be removed once F37 is EOL
-%pretrans -n %{pkgname} -p <lua>
-path = "/usr/lib/node_modules"
-st = posix.stat(path)
-if st and st.type == "directory" then
-  status = os.rename(path, path .. ".rpmmoved")
-  if not status then
-    suffix = 0
-    while not status do
-      suffix = suffix + 1
-      status = os.rename(path .. ".rpmmoved", path .. ".rpmmoved." .. suffix)
-    end
-    os.rename(path, path .. ".rpmmoved")
-  end
-end
-
 
 %files -n %{pkgname}
 %doc CHANGELOG.md onboarding.md GOVERNANCE.md README.md
@@ -894,6 +886,12 @@ end
 
 
 %changelog
+* Mon Mar 03 2025 Andrei Radchenko <aradchen@redhat.com> - 1:22.13.1-2
+- Remove obsolete lua pretransaction script from spec file
+  Resolves: RHEL-83013
+- Disable npm update notifications for users
+  Resolves: RHEL-81155
+
 * Thu Jan 30 2025 Jan Staněk <jstanek@redhat.com> - 1:22.13.1-1
 - Update to version 22.13.1
   Fixes CVE-2025-23083 CVE-2025-23085 CVE-2025-22150
