@@ -46,7 +46,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 2
+%global baserelease 1
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -57,8 +57,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 13
-%global nodejs_patch 1
+%global nodejs_minor 15
+%global nodejs_patch 0
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
 %global nodejs_abi %{nodejs_soversion}
@@ -85,7 +85,7 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.34.4
+%global c_ares_version 1.34.5
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 9.2.1
@@ -100,7 +100,7 @@
 %global nghttp3_version 1.6.0
 
 # ngtcp2 from deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
-%global ngtcp2_version 1.9.1
+%global ngtcp2_version 1.11.0
 
 # ICU - from tools/icu/current_ver.dep
 %global icu_major 76
@@ -112,7 +112,7 @@
 # " this line just fixes syntax highlighting for vim that is confused by the above and continues literal
 
 # simdutf from deps/simdutf/simdutf.h
-%global simdutf_version 5.6.4
+%global simdutf_version 6.0.3
 
 # OpenSSL minimum version
 %global openssl11_minimum 1:1.1.1
@@ -142,7 +142,7 @@
 %global histogram_version 0.11.8
 
 # sqlite - from deps/sqlite/sqlite3.h
-%global sqlite_version 3.47.2
+%global sqlite_version 3.49.1
 
 
 Name: nodejs
@@ -319,7 +319,7 @@ Provides: bundled(simdutf) = %{simdutf_version}
 
 # Upstream has added a new URL parser that has no option to build as a shared
 # library (19.7.0+)
-Provides: bundled(ada) = 2.8.0
+Provides: bundled(ada) = 2.9.2
 
 
 # undici and cjs-module-lexer ship with pre-built WASM binaries.
@@ -886,16 +886,29 @@ end
 
 
 %changelog
+* Thu Apr 24 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.15.0-1
+- Update to 22.15.0
+- Drop upstream patches
+  Resolves: RHEL-87319  RHEL-86586
+
+* Tue Apr 22 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.13.1-4
+- Patch fix for sqlite CVE-2025-31498
+  Resolves: RHEL-87319
+
+* Mon Apr 14 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.13.1-3
+- Update c-ares to newest version with fix for CVE-2025-31498
+  Resolves: RHEL-86586
+
 * Mon Mar 03 2025 Andrei Radchenko <aradchen@redhat.com> - 1:22.13.1-2
 - Remove obsolete lua pretransaction script from spec file
-  Resolves: RHEL-83013
+  Resolves: RHEL-81119
 - Disable npm update notifications for users
-  Resolves: RHEL-81155
+  Resolves: RHEL-81158
 
 * Thu Jan 30 2025 Jan Staněk <jstanek@redhat.com> - 1:22.13.1-1
 - Update to version 22.13.1
   Fixes CVE-2025-23083 CVE-2025-23085 CVE-2025-22150
-  Resolves: RHEL-76360
+  Resolves: RHEL-76354
 
 * Mon Nov 04 2024 Jan Staněk <jstanek@redhat.com> - 1:22.11.0-1
 - Update to version 22.11.0
