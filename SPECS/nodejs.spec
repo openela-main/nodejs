@@ -78,7 +78,7 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 15
+%global nodejs_minor 16
 %global nodejs_patch 0
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
@@ -124,7 +124,7 @@
 %global ngtcp2_version 1.11.0
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 76
+%global icu_major 77
 %global icu_minor 1
 %global icu_version %{icu_major}.%{icu_minor}
 
@@ -133,7 +133,7 @@
 # " this line just fixes syntax highlighting for vim that is confused by the above and continues literal
 
 # simdutf from deps/simdutf/simdutf.h
-%global simdutf_version 6.0.3
+%global simdutf_version 6.4.2
 
 # OpenSSL minimum version
 %global openssl11_minimum 1:1.1.1
@@ -371,14 +371,14 @@ Provides: bundled(ada) = 2.9.2
 
 # undici and cjs-module-lexer ship with pre-built WASM binaries.
 %if %{with bundled_cjs_module_lexer}
-Provides: bundled(nodejs-cjs-module-lexer) = 1.2.2
+Provides: bundled(nodejs-cjs-module-lexer) = 2.1.0
 %else
 BuildRequires: nodejs-cjs-module-lexer
 Requires: nodejs-cjs-module-lexer
 %endif
 
 %if %{with bundled_undici}
-Provides: bundled(nodejs-undici) = 6.19.2
+Provides: bundled(nodejs-undici) = 6.21.2
 %else
 BuildRequires: nodejs-undici
 Requires: nodejs-undici
@@ -948,6 +948,11 @@ end
 
 
 %changelog
+* Tue May 20 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.15-1-1
+- Update to 22.16.0
+  Fixes: CVE-2025-23166
+- Resolves: RHEL-91596 RHEL-92859
+
 * Thu Apr 24 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.15.0-1
 - Update to 22.15.0
 - Drop upstream patches
