@@ -57,7 +57,7 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 15
+%global nodejs_minor 16
 %global nodejs_patch 0
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
@@ -103,7 +103,7 @@
 %global ngtcp2_version 1.11.0
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 76
+%global icu_major 77
 %global icu_minor 1
 %global icu_version %{icu_major}.%{icu_minor}
 
@@ -112,7 +112,7 @@
 # " this line just fixes syntax highlighting for vim that is confused by the above and continues literal
 
 # simdutf from deps/simdutf/simdutf.h
-%global simdutf_version 6.0.3
+%global simdutf_version 6.4.2
 
 # OpenSSL minimum version
 %global openssl11_minimum 1:1.1.1
@@ -170,6 +170,8 @@ Source200: nodejs-tarball.sh
 Source201: npmrc.builtin.in
 Source202: nodejs.pc.in
 Source203: v8.pc.in
+Source300: test-runner.sh
+Source301: test-should-pass.txt
 
 Patch: 0001-Remove-unused-OpenSSL-config.patch
 
@@ -766,6 +768,13 @@ sed -e 's#@PREFIX@#%{_prefix}#g' \
 
 
 %check
+#run unit test that should pass from list
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
+  bash %{SOURCE300} \
+       %{buildroot}/%{_bindir}/node-%{nodejs_pkg_major} \
+       %{_builddir}/node-v%{nodejs_version}/test/ \
+       %{SOURCE301}
+
 # Fail the build if the versions don't match
 LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}/%{_bindir}/node-%{nodejs_pkg_major} -e "require('assert').equal(process.versions.node, '%{nodejs_version}')"
 LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}/%{_bindir}/node-%{nodejs_pkg_major} -e "require('assert').equal(process.versions.v8.replace(/-node\.\d+$/, ''), '%{v8_version}')"
@@ -886,6 +895,10 @@ end
 
 
 %changelog
+* Tue May 20 2025 Andrei Radchenko <aradchen@redhat.com> - 1:22.16.0-1
+- Update to 22.16.0
+  Resolves: RHEL-89600 RHEL-92872 RHEL-92420
+
 * Thu Apr 24 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.15.0-1
 - Update to 22.15.0
 - Drop upstream patches
