@@ -67,7 +67,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 1
+%global baserelease 2
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -163,7 +163,7 @@
 %global histogram_version 0.11.8
 
 # sqlite - from deps/sqlite/sqlite3.h
-%global sqlite_version 3.49.1
+%global sqlite_version 3.50.3
 
 
 Name: nodejs
@@ -218,6 +218,7 @@ Source212: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-20/wasi-sdk-
 Source300: test-runner.sh
 Source301: test-should-pass.txt
 Patch1: 0001-Remove-unused-OpenSSL-config.patch
+Patch2: 0001-sqlite-CVE-2025-6965.patch
 
 %global pkgname nodejs
 
@@ -948,6 +949,10 @@ end
 
 
 %changelog
+* Thu Jul 17 2025 Andrei Radchenko <aradchen@redhat.com> - 1:22.16.0-2
+- Patch fix for sqlite CVE-2025-6965
+  Resolves: RHEL-103835
+
 * Tue May 20 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.15-1-1
 - Update to 22.16.0
   Fixes: CVE-2025-23166
