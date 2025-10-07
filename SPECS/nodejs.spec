@@ -78,7 +78,7 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 16
+%global nodejs_minor 19
 %global nodejs_patch 0
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
@@ -102,17 +102,17 @@
 %global v8_release %{nodejs_epoch}.%{nodejs_major}.%{nodejs_minor}.%{nodejs_patch}.%{nodejs_release}
 
 # zlib - from deps/zlib/zlib.h
-%global zlib_version 1.3.0.1-motley
+%global zlib_version 1.3.1
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
 %global c_ares_version 1.34.5
 
 # llhttp - from deps/llhttp/include/llhttp.h
-%global llhttp_version 9.2.1
+%global llhttp_version 9.3.0
 
 # libuv - from deps/uv/include/uv/version.h
-%global libuv_version 1.49.2
+%global libuv_version 1.51.0
 
 # nghttp2 - from deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
 %global nghttp2_version 1.64.0
@@ -146,7 +146,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.9.2
+%global npm_version 10.9.3
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -163,7 +163,7 @@
 %global histogram_version 0.11.8
 
 # sqlite - from deps/sqlite/sqlite3.h
-%global sqlite_version 3.50.3
+%global sqlite_version 3.50.4
 
 
 Name: nodejs
@@ -218,7 +218,7 @@ Source212: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-20/wasi-sdk-
 Source300: test-runner.sh
 Source301: test-should-pass.txt
 Patch1: 0001-Remove-unused-OpenSSL-config.patch
-Patch2: 0001-sqlite-CVE-2025-6965.patch
+Patch2: 0002-fips-disable-options.patch
 
 %global pkgname nodejs
 
@@ -626,7 +626,8 @@ export PATH="${PWD}/.bin:$PATH"
            --with-intl=small-icu \
            --with-icu-default-data-dir=%{icudatadir} \
            --without-corepack \
-           --openssl-use-def-ca-store
+           --openssl-use-def-ca-store \
+           --use-prefix-to-find-headers
 
 %ninja_build -C out/Release
 
@@ -949,11 +950,15 @@ end
 
 
 %changelog
+* Fri Aug 29 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.19.0-1
+- Update to 22.19.0
+  Resolves: RHEL-100424
+
 * Thu Jul 17 2025 Andrei Radchenko <aradchen@redhat.com> - 1:22.16.0-2
 - Patch fix for sqlite CVE-2025-6965
   Resolves: RHEL-103835
 
-* Tue May 20 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.15-1-1
+* Tue May 20 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.16.0-1
 - Update to 22.16.0
   Fixes: CVE-2025-23166
 - Resolves: RHEL-91596 RHEL-92859
