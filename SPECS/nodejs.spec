@@ -16,7 +16,7 @@
 #     use --with=bundled; will bundle deps, but do not add the suffix
 #
 # create bootstrapping build with bundled deps and extra release suffix
-%bcond_with bootstrap
+%bcond_with bootstrap 
 # bundle dependencies that are not available in CentOS
 %if %{with bootstrap}
 %bcond_without bundled
@@ -44,8 +44,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 20
-%global nodejs_minor 16
-%global nodejs_patch 0
+%global nodejs_minor 19
+%global nodejs_patch 5
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -57,7 +57,7 @@
 # == Bundled Dependency Versions ==
 # v8 - from deps/v8/include/v8-version.h
 # Epoch is set to ensure clean upgrades from the old v8 package
-%global v8_epoch 2
+%global v8_epoch 3
 %global v8_major 11
 %global v8_minor 3
 %global v8_build 244
@@ -67,12 +67,13 @@
 %global v8_version %{v8_major}.%{v8_minor}.%{v8_build}.%{v8_patch}
 %global v8_release %{nodejs_epoch}.%{nodejs_major}.%{nodejs_minor}.%{nodejs_patch}.%{nodejs_release}
 
+
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.31.0
+%global c_ares_version 1.34.5
 
 # llhttp - from deps/llhttp/include/llhttp.h
-%global llhttp_version 8.1.2
+%global llhttp_version 9.3.0
 
 # libuv - from deps/uv/include/uv/version.h
 %global libuv_version 1.46.0
@@ -87,7 +88,7 @@
 %global ngtcp2_version 1.1.0
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 75
+%global icu_major 77
 %global icu_minor 1
 %global icu_version %{icu_major}.%{icu_minor}
 
@@ -106,10 +107,10 @@
 %endif
 
 # simduft from deps/simdutf/simdutf.h
-%global simduft_version 5.2.8
+%global simduft_version 6.4.2
 
 # ada from deps/ada/ada.h
-%global ada_version 2.8.0
+%global ada_version 2.9.2
 
 # OpenSSL minimum version
 %global openssl_minimum 1:1.1.1
@@ -122,7 +123,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.8.1
+%global npm_version 10.8.2
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -132,7 +133,7 @@
 
 # Node.js 16.9.1 and later comes with an experimental package management tool
 # corepack - from deps/corepack/package.json
-%global corepack_version 0.28.1
+%global corepack_version 0.33.0
 
 # uvwasi - from deps/uvwasi/include/uvwasi.h
 %global uvwasi_version 0.0.21
@@ -172,23 +173,25 @@ Source8: npmrc.builtin.in
 # Note: These sources would also include pre-compiled WASM blobs… so they are adjusted not to.
 # Recipes for creating these blobs are included in the sources.
 
-# Version: jq '.version' deps/cjs-module-lexer/package.json
-# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/1.2.2.tar.gz
-# Adjustments: rm -f cjs-module-lexer-1.2.2/lib/lexer.wasm
-Source101: cjs-module-lexer-1.2.2.tar.gz
+# Version: jq '.version' deps/cjs-module-lexer/src/package.json
+# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/2.1.0.tar.gz
+# Adjustments: rm -f cjs-module-lexer-2.1.0/lib/lexer.wasm
+Source101: cjs-module-lexer-2.1.0.tar.gz
 # The WASM blob was made using wasi-sdk v11; compiler libraries are linked in.
 # Version source (cjs-module-lexer tarball): Makefile
 Source102: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-wasi-sdk-11.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.13.0.tar.gz
-# Adjustments: rm -f undici-6.13.0/lib/llhttp/llhttp*.wasm
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.21.2.tar.gz
+# Adjustments: rm -f undici-6.21.2/lib/llhttp/llhttp*.wasm
 # wasi-sdk version can be found in lib/llhttp/wasm_build_env.txt
-Source111: undici-6.19.2.tar.gz
+Source111: undici-6.21.2.tar.gz
 # The WASM blob was made using wasi-sdk v16; compiler libraries are linked in.
 # Version source: deps/undici/src/lib/llhttp/wasm_build_env.txt
 # Also check (undici tarball): lib/llhttp/wasm_build_env.txt
 Source112: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-16/wasi-sdk-wasi-sdk-16.tar.gz
+Source300: test-runner.sh
+Source301: test-should-pass.txt
 
 # Disable running gyp on bundled deps we don't use
 Patch1: 0001-Disable-running-gyp-on-shared-deps.patch
@@ -445,7 +448,8 @@ export LDFLAGS="%{build_ldflags}"
            --with-icu-default-data-dir=%{icudatadir} \
            %{!?with_corepack:--without-corepack} \
            --openssl-use-def-ca-store \
-           --openssl-default-cipher-list=PROFILE=SYSTEM
+           --openssl-default-cipher-list=PROFILE=SYSTEM \
+           --use-prefix-to-find-headers
 
 %if %{?with_debug} == 1
 # Setting BUILDTYPE=Debug builds both release and debug binaries
@@ -575,6 +579,13 @@ install -Dpm0644 -t %{buildroot}%{icudatadir} deps/icu/source/converted/*
 
 
 %check
+#run unit test that should pass from list
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
+  bash %{SOURCE300} \
+       %{buildroot}/%{_bindir}/node \
+       %{_builddir}/node-v%{nodejs_version}/test/ \
+       %{SOURCE301}
+
 # Fail the build if the versions don't match
 %{buildroot}/%{_bindir}/node -e "require('assert').equal(process.versions.node, '%{nodejs_version}')"
 %{buildroot}/%{_bindir}/node -e "require('assert').equal(process.versions.v8.replace(/-node\.\d+$/, ''), '%{v8_version}')"
@@ -590,69 +601,11 @@ NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/nod
 # Make sure i18n support is working
 NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/node_modules/npm/node_modules LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}/%{_bindir}/node --icu-data-dir=%{buildroot}%{icudatadir} %{SOURCE2}
 
-
-%pretrans -n npm -p <lua>
--- Remove all of the symlinks from the bundled npm node_modules directory
--- This scriptlet can be removed in Fedora 31
-base_path = "%{_prefix}/lib/node_modules/npm/node_modules/"
-d_st = posix.stat(base_path)
-if d_st then
-  for f in posix.files(base_path) do
-    path = base_path..f
-    st = posix.stat(path)
-    if st and st.type == "link" then
-      os.remove(path)
-    end
-  end
-end
-
--- Replace the npm docs directory with a symlink
--- Drop this scriptlet when F31 is EOL
-path = "%{_prefix}/lib/node_modules/npm/doc"
-st = posix.stat(path)
-if st and st.type == "directory" then
-  status = os.rename(path, path .. ".rpmmoved")
-  if not status then
-    suffix = 0
-    while not status do
-      suffix = suffix + 1
-      status = os.rename(path .. ".rpmmoved", path .. ".rpmmoved." .. suffix)
-    end
-    os.rename(path, path .. ".rpmmoved")
-  end
-end
-
--- Replace the npm docs directory with a symlink
--- Drop this scriptlet when F31 is EOL
-path = "%{_prefix}/lib/node_modules/npm/html"
-st = posix.stat(path)
-if st and st.type == "directory" then
-  status = os.rename(path, path .. ".rpmmoved")
-  if not status then
-    suffix = 0
-    while not status do
-      suffix = suffix + 1
-      status = os.rename(path .. ".rpmmoved", path .. ".rpmmoved." .. suffix)
-    end
-    os.rename(path, path .. ".rpmmoved")
-  end
-end
-
--- Replace the npm man directory with a symlink
--- Drop this scriptlet when F31 is EOL
-path = "%{_prefix}/lib/node_modules/npm/man"
-st = posix.stat(path)
-if st and st.type == "directory" then
-  status = os.rename(path, path .. ".rpmmoved")
-  if not status then
-    suffix = 0
-    while not status do
-      suffix = suffix + 1
-      status = os.rename(path .. ".rpmmoved", path .. ".rpmmoved." .. suffix)
-    end
-    os.rename(path, path .. ".rpmmoved")
-  end
-end
+# Ensure npm's update notifier has been disabled
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
+%{buildroot}%{_bindir}/node \
+%{buildroot}%{_bindir}/npm \
+--globalconfig=%{buildroot}$(LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}%{_bindir}/node %{buildroot}%{_bindir}/npm config get globalconfig) config ls -l --json | jq -e '.["update-notifier"] == false'
 
 
 %files
@@ -724,6 +677,35 @@ end
 
 
 %changelog
+* Thu Sep 04 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:20.19.5-1
+ - Update to version 20.19.5
+   Resolves: RHEL-100423
+
+* Thu May 15 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:20.19.2-1
+ - Update to version 20.19.2
+   Fixes: CVE-2025-23166
+   Resolves: RHEL-91595 RHEL-89598 RHEL-92854
+
+* Thu Apr 24 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.19.1-1
+- Update to version 20.19.1
+  Resolves: RHEL-78763
+
+* Tue Apr 15 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.18.2-4
+- Update c-ares to 1.34.5 to address CVE-2025-31498
+
+* Thu Mar 20 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.18.2-3
+- Remove obsolete lua pretransaction script from spec file
+  Resolves: RHEL-81125
+
+* Wed Mar 05 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.18.2-2
+- Disable npm's update-notifier
+  Resolves: RHEL-81077
+
+* Thu Jan 30 2025 Tomáš Juhász <tjuhasz@redhat.com> - 1:20.18.2-1
+- Update to version 20.18.2
+  Fixes: CVE-2025-23083 CVE-2025-23085 CVE-2025-22150
+  Resolves: RHEL-76001 RHEL-76146
+
 * Mon Aug 05 2024 Honza Horak <hhorak@redhat.com> - 1:20.16.0-1
 - Update to 20.16.0
   Fixes: CVE-2024-36137 CVE-2024-22018 CVE-2024-22020

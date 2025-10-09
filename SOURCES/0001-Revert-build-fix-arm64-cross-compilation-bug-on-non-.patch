@@ -28,12 +28,12 @@ index f189ba2bf09..9b2d993bb32 100755
    if options.node_snapshot_main is not None:
 diff --git a/node.gyp b/node.gyp
 index ff59af6ff76..7d9ec812917 100644
---- a/node.gyp
-+++ b/node.gyp
-@@ -468,21 +468,6 @@
-     },
- 
-     'conditions': [
+--- a/node.gyp	2025-01-21 05:28:01.000000000 +0100
++++ b/node.gyp	2025-02-03 09:26:11.282754397 +0100
+@@ -472,21 +472,6 @@
+       ['clang==0 and OS!="win"', {
+         'cflags': [ '-Wno-restrict', ],
+       }],
 -      # Pointer authentication for ARM64.
 -      ['target_arch=="arm64"', {
 -          'target_conditions': [
@@ -52,6 +52,3 @@ index ff59af6ff76..7d9ec812917 100644
        ['OS in "aix os400"', {
          'ldflags': [
            '-Wl,-bnoerrmsg',
--- 
-2.45.2
-

@@ -1,32 +1,18 @@
-From 2da7f25d9311bdea702b4b435830c02ce78b3ab9 Mon Sep 17 00:00:00 2001
+From 6167666f43da361b2a1eda0a14d42c5b8cb9ae0d Mon Sep 17 00:00:00 2001
 From: rpm-build <rpm-build>
 Date: Tue, 30 May 2023 13:12:35 +0200
 Subject: [PATCH] Disable running gyp on shared deps
 
 Signed-off-by: rpm-build <rpm-build>
 ---
- Makefile |  2 +-
  node.gyp | 17 -----------------
- 2 files changed, 1 insertion(+), 18 deletions(-)
+ 1 files changed, 18 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 7bd80d0..c43a50f 100644
---- a/Makefile
-+++ b/Makefile
-@@ -169,7 +169,7 @@ with-code-cache test-code-cache:
- 	$(warning '$@' target is a noop)
- 
- out/Makefile: config.gypi common.gypi node.gyp \
--	deps/uv/uv.gyp deps/llhttp/llhttp.gyp deps/zlib/zlib.gyp \
-+	deps/llhttp/llhttp.gyp \
- 	deps/simdutf/simdutf.gyp deps/ada/ada.gyp \
- 	tools/v8_gypfiles/toolchain.gypi tools/v8_gypfiles/features.gypi \
- 	tools/v8_gypfiles/inspector.gypi tools/v8_gypfiles/v8.gyp
 diff --git a/node.gyp b/node.gyp
-index 4aac640..aa0ba88 100644
+index 33bc7d9..a216c41 100644
 --- a/node.gyp
 +++ b/node.gyp
-@@ -775,23 +775,6 @@
+@@ -797,23 +797,6 @@
                ],
              },
            ],
@@ -51,5 +37,5 @@ index 4aac640..aa0ba88 100644
        ],
      }, # node_core_target_name
 -- 
-2.44.0
+2.49.0
 
