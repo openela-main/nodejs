@@ -135,67 +135,109 @@ rm -f node-v${version}.tar.gz
 set +e
 
 # Determine the bundled versions of the various packages
+echo "Included software versions"
+echo "-------------------------"
+echo
+echo "Node.js version"
+echo "========================="
+echo "${version}"
+echo
 echo "Bundled software versions"
 echo "-------------------------"
 echo
-echo "libnode shared object version"
+echo "libnode shared object version (nodejs_soversion)"
 echo "========================="
-grep "define NODE_MODULE_VERSION" node-v${version}/src/node_version.h
+NODE_SOVERSION=$(grep -oP '(?<=#define NODE_MODULE_VERSION )\d+' node-v${version}/src/node_version.h)
+echo "${NODE_SOVERSION}"
 echo
 echo "V8"
 echo "========================="
-grep "define V8_MAJOR_VERSION" node-v${version}/deps/v8/include/v8-version.h
-grep "define V8_MINOR_VERSION" node-v${version}/deps/v8/include/v8-version.h
-grep "define V8_BUILD_NUMBER" node-v${version}/deps/v8/include/v8-version.h
-grep "define V8_PATCH_LEVEL" node-v${version}/deps/v8/include/v8-version.h
+V8_MAJOR=$(grep -oP '(?<=#define V8_MAJOR_VERSION )\d+' node-v${version}/deps/v8/include/v8-version.h)
+V8_MINOR=$(grep -oP '(?<=#define V8_MINOR_VERSION )\d+' node-v${version}/deps/v8/include/v8-version.h)
+V8_BUILD=$(grep -oP '(?<=#define V8_BUILD_NUMBER )\d+' node-v${version}/deps/v8/include/v8-version.h)
+V8_PATCH=$(grep -oP '(?<=#define V8_PATCH_LEVEL )\d+' node-v${version}/deps/v8/include/v8-version.h)
+echo "${V8_MAJOR}.${V8_MINOR}.${V8_BUILD}.${V8_PATCH}"
 echo
 echo "c-ares"
 echo "========================="
-grep "define ARES_VERSION_MAJOR" node-v${version}/deps/cares/include/ares_version.h
-grep "define ARES_VERSION_MINOR" node-v${version}/deps/cares/include/ares_version.h
-grep "define ARES_VERSION_PATCH" node-v${version}/deps/cares/include/ares_version.h
+C_ARES_VERSION=$(grep -oP '(?<=#define ARES_VERSION_STR ).*\"' node-v${version}/deps/cares/include/ares_version.h |sed -e 's/^"//' -e 's/"$//')
+echo $C_ARES_VERSION
 echo
 echo "llhttp"
 echo "========================="
-grep "define LLHTTP_VERSION_MAJOR" node-v${version}/deps/llhttp/include/llhttp.h
-grep "define LLHTTP_VERSION_MINOR" node-v${version}/deps/llhttp/include/llhttp.h
-grep "define LLHTTP_VERSION_PATCH" node-v${version}/deps/llhttp/include/llhttp.h
+LLHTTP_MAJOR=$(grep -oP '(?<=#define LLHTTP_VERSION_MAJOR )\d+' node-v${version}/deps/llhttp/include/llhttp.h)
+LLHTTP_MINOR=$(grep -oP '(?<=#define LLHTTP_VERSION_MINOR )\d+' node-v${version}/deps/llhttp/include/llhttp.h)
+LLHTTP_PATCH=$(grep -oP '(?<=#define LLHTTP_VERSION_PATCH )\d+' node-v${version}/deps/llhttp/include/llhttp.h)
+LLHTTP_VERSION="${LLHTTP_MAJOR}.${LLHTTP_MINOR}.${LLHTTP_PATCH}"
+echo $LLHTTP_VERSION
 echo
 echo "libuv"
 echo "========================="
-grep "define UV_VERSION_MAJOR" node-v${version}/deps/uv/include/uv/version.h
-grep "define UV_VERSION_MINOR" node-v${version}/deps/uv/include/uv/version.h
-grep "define UV_VERSION_PATCH" node-v${version}/deps/uv/include/uv/version.h
+UV_MAJOR=$(grep -oP '(?<=#define UV_VERSION_MAJOR )\d+' node-v${version}/deps/uv/include/uv/version.h)
+UV_MINOR=$(grep -oP '(?<=#define UV_VERSION_MINOR )\d+' node-v${version}/deps/uv/include/uv/version.h)
+UV_PATCH=$(grep -oP '(?<=#define UV_VERSION_PATCH )\d+' node-v${version}/deps/uv/include/uv/version.h)
+LIBUV_VERSION="${UV_MAJOR}.${UV_MINOR}.${UV_PATCH}"
+echo $LIBUV_VERSION
 echo
 echo "nghttp2"
 echo "========================="
-grep "define NGHTTP2_VERSION " node-v${version}/deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
+NGHTTP2_VERSION=$(grep -oP '(?<=#define NGHTTP2_VERSION ).*\"' node-v${version}/deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h |sed -e 's/^"//' -e 's/"$//')
+echo $NGHTTP2_VERSION
 echo
 echo "nghttp3"
 echo "========================="
-grep "define NGHTTP3_VERSION " node-v${version}/deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
+NGHTTP3_VERSION=$(grep -oP '(?<=#define NGHTTP3_VERSION ).*\"' node-v${version}/deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h |sed -e 's/^"//' -e 's/"$//')
+echo $NGHTTP3_VERSION
 echo
 echo "ngtcp2"
 echo "========================="
-grep "define NGTCP2_VERSION " node-v${version}/deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
+NGTCP2_VERSION=$(grep -oP '(?<=#define NGTCP2_VERSION ).*\"' node-v${version}/deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h |sed -e 's/^"//' -e 's/"$//')
+echo $NGTCP2_VERSION
 echo
 echo "ICU"
 echo "========================="
-grep "url" node-v${version}/tools/icu/current_ver.dep
+ICU_MAJOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\)-\([[:digit:]]\+\).*/\1/g')
+ICU_MINOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\)-\([[:digit:]]\+\).*/\2/g')
+echo "${ICU_MAJOR}.${ICU_MINOR}"
+echo
+echo "simdutf"
+echo "========================="
+SIMDUTF_VERSION=$(grep -oP '(?<=#define SIMDUTF_VERSION ).*\"' node-v${version}/deps/simdutf/simdutf.h |sed -e 's/^"//' -e 's/"$//')
+echo $SIMDUTF_VERSION
+echo
+echo "ada"
+echo "========================="
+ADA_VERSION=$(grep -osP '(?<=#define ADA_VERSION ).*\"' node-v${version}/deps/ada/ada.h |sed -e 's/^"//' -e 's/"$//')
+ADA_VERSION=${ADA_VERSION:-0}
+echo "${ADA_VERSION}"
 echo
 echo "punycode"
 echo "========================="
-grep "'version'" node-v${version}/lib/punycode.js
-echo
-echo "uvwasi"
-echo "========================="
-grep "define UVWASI_VERSION_MAJOR" node-v${version}/deps/uvwasi/include/uvwasi.h
-grep "define UVWASI_VERSION_MINOR" node-v${version}/deps/uvwasi/include/uvwasi.h
-grep "define UVWASI_VERSION_PATCH" node-v${version}/deps/uvwasi/include/uvwasi.h
+PUNYCODE_VERSION=$(grep -oP "'version': '\K[^']+" ./node-v${version}/lib/punycode.js)
+echo $PUNYCODE_VERSION
 echo
 echo "npm"
 echo "========================="
-grep "\"version\":" node-v${version}/deps/npm/package.json
+NPM_VERSION=$(jq -r .version ./node-v${version}/deps/npm/package.json)
+echo $NPM_VERSION
+echo
+echo "corepack"
+echo "========================="
+COREPACK_VERSION=$(jq -r .version ./node-v${version}/deps/corepack/package.json)
+echo $COREPACK_VERSION
+echo
+echo "uvwasi"
+echo "========================="
+UVWASI_MAJOR=$(grep -oP '(?<=#define UVWASI_VERSION_MAJOR )\d+' node-v${version}/deps/uvwasi/include/uvwasi.h)
+UVWASI_MINOR=$(grep -oP '(?<=#define UVWASI_VERSION_MINOR )\d+' node-v${version}/deps/uvwasi/include/uvwasi.h)
+UVWASI_PATCH=$(grep -oP '(?<=#define UVWASI_VERSION_PATCH )\d+' node-v${version}/deps/uvwasi/include/uvwasi.h)
+UVWASI_VERSION="${UVWASI_MAJOR}.${UVWASI_MINOR}.${UVWASI_PATCH}"
+echo $UVWASI_VERSION
+echo
+echo "histogram_c"
+echo "========================="
+HISTOGRAM_VERSION=$(grep -oP '(?<=#define HDR_HISTOGRAM_VERSION ).*\"' node-v${version}/deps/histogram/include/hdr/hdr_histogram_version.h|sed -e 's/^"//' -e 's/"$//')
+echo $HISTOGRAM_VERSION
 echo
 echo "Make sure these versions match what is in the RPM spec file"
 
