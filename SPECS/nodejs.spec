@@ -43,8 +43,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 20
-%global nodejs_minor 16
-%global nodejs_patch 0
+%global nodejs_minor 19
+%global nodejs_patch 2
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -68,10 +68,10 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.31.0
+%global c_ares_version 1.34.5
 
 # llhttp - from deps/llhttp/include/llhttp.h
-%global llhttp_version 8.1.2
+%global llhttp_version 9.2.1
 
 # libuv - from deps/uv/include/uv/version.h
 %global libuv_version 1.46.0
@@ -86,7 +86,7 @@
 %global ngtcp2_version 1.1.0
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 75
+%global icu_major 76
 %global icu_minor 1
 %global icu_version %{icu_major}.%{icu_minor}
 
@@ -105,10 +105,10 @@
 %endif
 
 # simduft from deps/simdutf/simdutf.h
-%global simduft_version 5.2.8
+%global simdutf_version 6.0.3
 
 # ada from deps/ada/ada.h
-%global ada_version 2.8.0
+%global ada_version 2.9.2
 
 # OpenSSL minimum version
 %global openssl_minimum 1:1.1.1
@@ -121,7 +121,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.8.1
+%global npm_version 10.8.2
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -131,7 +131,7 @@
 
 # Node.js 16.9.1 and later comes with an experimental package management tool
 # corepack - from deps/corepack/package.json
-%global corepack_version 0.28.1
+%global corepack_version 0.31.0
 
 # uvwasi - from deps/uvwasi/include/uvwasi.h
 %global uvwasi_version 0.0.21
@@ -172,19 +172,21 @@ Source8: npmrc.builtin.in
 # Recipes for creating these blobs are included in the sources.
 
 # Version: jq '.version' deps/cjs-module-lexer/package.json
-# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/1.2.2.tar.gz
-# Adjustments: rm -f cjs-module-lexer-1.2.2/lib/lexer.wasm
+# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/1.4.1.tar.gz
+# Adjustments: rm -f cjs-module-lexer-1.4.1/lib/lexer.wasm
 # wasi-sdk version can be found in Makefile
-# https://github.com/nodejs/cjs-module-lexer/blob/1.2.2/Makefile
-Source101: cjs-module-lexer-1.2.2.tar.gz
-Source111: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-11.0-linux.tar.gz
+# https://github.com/nodejs/cjs-module-lexer/blob/1.4.1/Makefile
+Source101: cjs-module-lexer-1.4.1.tar.gz
+Source111: https://github.com/WebAssembly/wasi-sdk/archive/refs/tags/wasi-sdk-12.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.13.0.tar.gz
-# Adjustments: rm -f undici-6.13.0/lib/llhttp/llhttp*.wasm
+# Original: https://github.com/nodejs/undici/archive/v6.21.2/undici-v6.21.2.tar.gz
+# Adjustments: rm -f undici-v6.21.2/lib/llhttp/llhttp*.wasm
 # wasi-sdk version can be found in lib/llhttp/wasm_build_env.txt
-Source102: undici-6.19.2.tar.gz
-Source112: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-16/wasi-sdk-16.0-linux.tar.gz
+Source102: undici-6.21.2.tar.gz
+Source112: https://github.com/WebAssembly/wasi-sdk/archive/refs/tags/wasi-sdk-20.tar.gz
+Source300: test-runner.sh
+Source301: test-should-pass.txt
 
 # Disable running gyp on bundled deps we don't use
 Patch1: 0001-Disable-running-gyp-on-shared-deps.patch
@@ -289,7 +291,7 @@ Provides: bundled(histogram) = %{histogram_version}
 %if %{with corepack}
 Provides: bundled(corepack) = %{corepack_version}
 %endif
-Provides: bundled(simduft) = %{simduft_version}
+Provides: bundled(simdutf) = %{simdutf_version}
 Provides: bundled(ada) = %{ada_version}
 
 # Make sure we keep NPM up to date when we update Node.js
@@ -553,6 +555,13 @@ install -Dpm0644 -t %{buildroot}%{icudatadir} deps/icu/source/converted/*
 
 
 %check
+#run unit test that should pass from list
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
+  bash %{SOURCE300} \
+       %{buildroot}/%{_bindir}/node \
+       %{_builddir}/node-v%{nodejs_version}/test/ \
+       %{SOURCE301}
+
 # Fail the build if the versions don't match
 %{buildroot}/%{_bindir}/node -e "require('assert').equal(process.versions.node, '%{nodejs_version}')"
 %{buildroot}/%{_bindir}/node -e "require('assert').equal(process.versions.v8.replace(/-node\.\d+$/, ''), '%{v8_version}')"
@@ -567,6 +576,11 @@ NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/nod
 # Make sure i18n support is working
 NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/node_modules/npm/node_modules LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}/%{_bindir}/node --icu-data-dir=%{buildroot}%{icudatadir} %{SOURCE2}
 
+# Ensure npm's update notifier has been disabled
+LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
+%{buildroot}%{_bindir}/node \
+%{buildroot}%{_bindir}/npm \
+--globalconfig=%{buildroot}$(LD_LIBRARY_PATH=%{buildroot}%{_libdir} %{buildroot}%{_bindir}/node %{buildroot}%{_bindir}/npm config get globalconfig) config ls -l --json | jq -e '.["update-notifier"] == false'
 
 %files
 %{_bindir}/node
@@ -634,6 +648,33 @@ NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/nod
 
 
 %changelog
+* Thu May 15 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.19.2-1
+- Update to version 20.19.2
+  Resolves: RHEL-92867 RHEL-92395 RHEL-89594
+
+* Thu Apr 24 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.19.1-1
+- Update to version 20.19.1
+  Resolves: RHEL-88577
+
+* Tue Apr 15 2025 Jan Staněk <jstanek@redhat.com> - 1:20.18.2-3
+- Update c-ares to 1.34.5 to address CVE-2025-31498
+
+* Wed Mar 05 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.18.2-2
+- Disable npm's update-notifier
+  Resolves: RHEL-81098
+
+* Wed Jan 29 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.18.2-1
+- Update to version 20.18.2
+  Fixes: CVE-2025-23083 CVE-2025-23085 CVE-2025-22150
+  Resolves: RHEL-76363 RHEL-76554 RHEL-76540
+
+* Wed Dec 04 2024 Jan Staněk <jstanek@redhat.com> - 1:20.18.1-1
+- Update to version 20.18.1
+
+* Mon Sep 23 2024 Jan Staněk <jstanek@redhat.com> - 1:20.17.0-1
+- Update to 20.17.0
+  Resolves: RHEL-58721
+
 * Mon Aug 05 2024 Honza Horak <hhorak@redhat.com> - 1:20.16.0-1
 - Update to 20.16.0
   Fixes: CVE-2024-36137 CVE-2024-22018 CVE-2024-22020
@@ -646,8 +687,8 @@ NODE_PATH=%{buildroot}%{_prefix}/lib/node_modules:%{buildroot}%{_prefix}/lib/nod
 
 * Tue Apr 16 2024 Jan Staněk <jstanek@redhat.com> - 1:20.12.2-1
 - Rebase to version 20.12.0
-  Fixes: CVE-2024-27983 CVE-2024-27982 CVE-2024-22025 (node)
-  Fixes: CVE-2024-25629 (c-ares)
+  Fixes CVE-2024-27983 CVE-2024-27982 CVE-2024-22025 (node)
+  Fixes CVE-2024-25629 (c-ares)
 
 * Tue Mar 05 2024 Lukas Javorsky <ljavorsk@redhat.com> - 1:20.11.1-1
 - Rebase to version 20.11.1
