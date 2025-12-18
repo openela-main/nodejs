@@ -1190,7 +1190,10 @@ parallel/test-http-max-header-size-per-stream.js
 parallel/test-repl-domain.js
 parallel/test-promise-swallowed-event.js
 parallel/test-sqlite-named-parameters.js
-parallel/test-tls-session-cache.js
+# Disabled on 26-11-2025
+# Test fails as openssl client refuses self-signed certificate
+# This has been tested on all supported RHEL versions (RHEL-8.10,RHEL-9.7/8,RHEL-10)
+#parallel/test-tls-session-cache.js
 parallel/test-dgram-send-callback-multi-buffer-empty-address.js
 parallel/test-worker-cleanexit-with-js.js
 parallel/test-stream2-basic.js
