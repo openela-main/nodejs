@@ -67,7 +67,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 2
+%global baserelease 1
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -78,7 +78,7 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 19
+%global nodejs_minor 22
 %global nodejs_patch 0
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
@@ -106,7 +106,7 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.34.5
+%global c_ares_version 1.34.6
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 9.3.0
@@ -146,7 +146,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.9.3
+%global npm_version 10.9.4
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -160,10 +160,13 @@
 %global uvwasi_version 0.0.21
 
 # histogram_c - assumed from timestamps
-%global histogram_version 0.11.8
+%global histogram_version 0.11.9
 
 # sqlite - from deps/sqlite/sqlite3.h
 %global sqlite_version 3.50.4
+
+# Version: jq '.version' deps/undici/src/package.json
+%global undici_version 6.23.0
 
 
 Name: nodejs
@@ -207,10 +210,10 @@ Source201: cjs-module-lexer-2.1.0.tar.gz
 # Version source (cjs-module-lexer tarball): Makefile
 Source202: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-12/wasi-sdk-wasi-sdk-12.tar.gz
 
-# Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.21.2.tar.gz
-# Adjustments: rm -f undici-6.21.2/lib/llhttp/llhttp*wasm*
-Source211: undici-6.21.2.tar.gz
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.23.0.tar.gz
+# Adjustments: rm -f undici-6.23.0/lib/llhttp/llhttp*wasm*
+Source211: undici-%{undici_version}.tar.gz
+
 # The WASM blob was made using wasi-sdk v16; compiler libraries are linked in.
 # Version source: deps/undici/src/lib/llhttp/wasm_build_env.txt
 # Also check (undici tarball): lib/llhttp/wasm_build_env.txt
@@ -950,6 +953,10 @@ end
 
 
 %changelog
+* Thu Jan 15 2026 Andrei Radchenko <aradchen@redhat.com> - 1:22.22.0-1
+- Update to 22.22.0
+  Resolves: RHEL-118152
+
 * Fri Aug 29 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.19.0-1
 - Update to 22.19.0
   Resolves: RHEL-100424
