@@ -44,8 +44,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 20
-%global nodejs_minor 19
-%global nodejs_patch 5
+%global nodejs_minor 20
+%global nodejs_patch 0
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -70,7 +70,7 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.34.5
+%global c_ares_version 1.34.6
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 9.3.0
@@ -133,13 +133,16 @@
 
 # Node.js 16.9.1 and later comes with an experimental package management tool
 # corepack - from deps/corepack/package.json
-%global corepack_version 0.33.0
+%global corepack_version 0.34.1
 
 # uvwasi - from deps/uvwasi/include/uvwasi.h
-%global uvwasi_version 0.0.21
+%global uvwasi_version 0.0.23
 
 # histogram_c - from deps/histogram/include/hdr/hdr_histogram_version.h
 %global histogram_version 0.11.8
+
+# Version: jq '.version' deps/undici/src/package.json
+%global undici_version 6.23.0
 
 Name: nodejs
 Epoch: %{nodejs_epoch}
@@ -181,11 +184,11 @@ Source101: cjs-module-lexer-2.1.0.tar.gz
 # Version source (cjs-module-lexer tarball): Makefile
 Source102: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-11/wasi-sdk-wasi-sdk-11.tar.gz
 
-# Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.21.2.tar.gz
-# Adjustments: rm -f undici-6.21.2/lib/llhttp/llhttp*.wasm
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.23.0.tar.gz
+# Adjustments: rm -f undici-6.23.0/lib/llhttp/llhttp*.wasm
 # wasi-sdk version can be found in lib/llhttp/wasm_build_env.txt
-Source111: undici-6.21.2.tar.gz
+Source111: undici-%{undici_version}.tar.gz
+
 # The WASM blob was made using wasi-sdk v16; compiler libraries are linked in.
 # Version source: deps/undici/src/lib/llhttp/wasm_build_env.txt
 # Also check (undici tarball): lib/llhttp/wasm_build_env.txt
@@ -677,6 +680,10 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
 
 
 %changelog
+* Wed Jan 14 2026 Andrei Radchenko <aradchen@redhat.com> - 1:20.20.0-1
+- Update to version 20.20.0
+  Resolves: RHEL-130972
+
 * Thu Sep 04 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:20.19.5-1
  - Update to version 20.19.5
    Resolves: RHEL-100423
