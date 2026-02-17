@@ -1,6 +1,6 @@
-SOURCES/icu4c-76_1-src.tgz
-SOURCES/node-v20.19.2-stripped.tar.gz
-SOURCES/undici-6.21.2.tar.gz
+SOURCES/node-v20.20.0-stripped.tar.gz
+SOURCES/undici-6.23.0.tar.gz
 SOURCES/wasi-sdk-12.tar.gz
 SOURCES/wasi-sdk-20.tar.gz
-SOURCES/cjs-module-lexer-1.4.1.tar.gz
+SOURCES/cjs-module-lexer-2.1.0.tar.gz
+SOURCES/icu4c-77_1-src.tgz

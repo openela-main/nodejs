@@ -43,8 +43,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 20
-%global nodejs_minor 19
-%global nodejs_patch 2
+%global nodejs_minor 20
+%global nodejs_patch 0
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -68,10 +68,10 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.34.5
+%global c_ares_version 1.34.6
 
 # llhttp - from deps/llhttp/include/llhttp.h
-%global llhttp_version 9.2.1
+%global llhttp_version 9.3.0
 
 # libuv - from deps/uv/include/uv/version.h
 %global libuv_version 1.46.0
@@ -86,7 +86,7 @@
 %global ngtcp2_version 1.1.0
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 76
+%global icu_major 77
 %global icu_minor 1
 %global icu_version %{icu_major}.%{icu_minor}
 
@@ -105,7 +105,7 @@
 %endif
 
 # simduft from deps/simdutf/simdutf.h
-%global simdutf_version 6.0.3
+%global simdutf_version 6.4.2
 
 # ada from deps/ada/ada.h
 %global ada_version 2.9.2
@@ -131,13 +131,13 @@
 
 # Node.js 16.9.1 and later comes with an experimental package management tool
 # corepack - from deps/corepack/package.json
-%global corepack_version 0.31.0
+%global corepack_version 0.34.1
 
 # uvwasi - from deps/uvwasi/include/uvwasi.h
-%global uvwasi_version 0.0.21
+%global uvwasi_version 0.0.23
 
 # histogram_c - from deps/histogram/include/hdr/hdr_histogram_version.h
-%global histogram_version 0.11.8
+%global histogram_version 0.11.9
 
 Name: nodejs
 Epoch: %{nodejs_epoch}
@@ -171,19 +171,18 @@ Source8: npmrc.builtin.in
 # Note: These sources would also include pre-compiled WASM blobs… so they are adjusted not to.
 # Recipes for creating these blobs are included in the sources.
 
-# Version: jq '.version' deps/cjs-module-lexer/package.json
-# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/1.4.1.tar.gz
-# Adjustments: rm -f cjs-module-lexer-1.4.1/lib/lexer.wasm
+# Version: jq '.version' deps/cjs-module-lexer/src/package.json
+# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/2.1.0.tar.gz
+# Adjustments: rm -f cjs-module-lexer-2.1.0/lib/lexer.wasm
 # wasi-sdk version can be found in Makefile
-# https://github.com/nodejs/cjs-module-lexer/blob/1.4.1/Makefile
-Source101: cjs-module-lexer-1.4.1.tar.gz
+Source101: cjs-module-lexer-2.1.0.tar.gz
 Source111: https://github.com/WebAssembly/wasi-sdk/archive/refs/tags/wasi-sdk-12.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/v6.21.2/undici-v6.21.2.tar.gz
-# Adjustments: rm -f undici-v6.21.2/lib/llhttp/llhttp*.wasm
+# Original: https://github.com/nodejs/undici/archive/v6.23.0/undici-v6.23.0.tar.gz
+# Adjustments: rm -f undici-v6.23.0/lib/llhttp/llhttp*.wasm
 # wasi-sdk version can be found in lib/llhttp/wasm_build_env.txt
-Source102: undici-6.21.2.tar.gz
+Source102: undici-6.23.0.tar.gz
 Source112: https://github.com/WebAssembly/wasi-sdk/archive/refs/tags/wasi-sdk-20.tar.gz
 Source300: test-runner.sh
 Source301: test-should-pass.txt
@@ -435,7 +434,8 @@ export LDFLAGS="%{build_ldflags}"
            --with-icu-default-data-dir=%{icudatadir} \
            %{!?with_corepack:--without-corepack} \
            --openssl-use-def-ca-store \
-           --openssl-default-cipher-list=PROFILE=SYSTEM
+           --openssl-default-cipher-list=PROFILE=SYSTEM \
+           --use-prefix-to-find-headers
 
 make BUILDTYPE=Release %{?_smp_mflags}
 
@@ -648,20 +648,28 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
 
 
 %changelog
+* Wed Jan 14 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:20.20.0-1
+- Update to version 20.20.0
+  Resolves: RHEL-141917
+
+* Mon Sep 15 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.19.5-1
+- Update to version 20.19.5
+  Resolves: RHEL-114749
+
 * Thu May 15 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.19.2-1
 - Update to version 20.19.2
-  Resolves: RHEL-92867 RHEL-92395 RHEL-89594
+  Resolves: RHEL-92865 RHEL-88876 RHEL-91597
 
 * Thu Apr 24 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.19.1-1
 - Update to version 20.19.1
-  Resolves: RHEL-88577
+  Resolves: RHEL-78764
 
 * Tue Apr 15 2025 Jan Staněk <jstanek@redhat.com> - 1:20.18.2-3
 - Update c-ares to 1.34.5 to address CVE-2025-31498
 
 * Wed Mar 05 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.18.2-2
 - Disable npm's update-notifier
-  Resolves: RHEL-81098
+  Resolves: RHEL-81078
 
 * Wed Jan 29 2025 Andrei Radchenko <aradchen@redhat.com> - 1:20.18.2-1
 - Update to version 20.18.2
