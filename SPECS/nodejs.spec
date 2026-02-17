@@ -46,7 +46,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 2
+%global baserelease 1
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -57,7 +57,7 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 19
+%global nodejs_minor 22
 %global nodejs_patch 0
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
@@ -85,7 +85,7 @@
 
 # c-ares - from deps/cares/include/ares_version.h
 # https://github.com/nodejs/node/pull/9332
-%global c_ares_version 1.34.5
+%global c_ares_version 1.34.6
 
 # llhttp - from deps/llhttp/include/llhttp.h
 %global llhttp_version 9.3.0
@@ -125,7 +125,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.9.3
+%global npm_version 10.9.4
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -136,10 +136,10 @@
 %global npm_envr %{npm_epoch}:%{npm_version}-%{npm_release}
 
 # uvwasi - from deps/uvwasi/include/uvwasi.h
-%global uvwasi_version 0.0.21
+%global uvwasi_version 0.0.23
 
 # histogram_c - assumed from timestamps
-%global histogram_version 0.11.8
+%global histogram_version 0.11.9
 
 # sqlite - from deps/sqlite/sqlite3.h
 %global sqlite_version 3.50.4
@@ -175,6 +175,7 @@ Source301: test-should-pass.txt
 
 Patch: 0001-Remove-unused-OpenSSL-config.patch
 Patch: 0003-fips-disable-options.patch
+
 %global pkgname nodejs
 
 BuildRequires: make
@@ -333,7 +334,7 @@ Requires: nodejs-cjs-module-lexer
 %endif
 
 %if %{with bundled_undici}
-Provides: bundled(nodejs-undici) = 6.19.2
+Provides: bundled(nodejs-undici) = 6.23.0
 %else
 BuildRequires: nodejs-undici
 Requires: nodejs-undici
@@ -896,36 +897,39 @@ end
 
 
 %changelog
+* Tue Jan 13 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.22.0-1
+- Update to 22.22.0
+  Resolves: RHEL-141879
+
 * Fri Aug 29 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.19.0-1
 - Update to 22.19.0
-  Resolves: RHEL-111912
+  Resolves: RHEL-100426
 
 * Mon Jul 21 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.16.0-2
 - Patch fix for CVE-2025-6965
-  Resolves: RHEL-103851
+  Resolves: RHEL-103853
 
 * Tue May 20 2025 Andrei Radchenko <aradchen@redhat.com> - 1:22.16.0-1
 - Update to 22.16.0
-  Resolves: RHEL-89600 RHEL-92872 RHEL-92420
+  Resolves: RHEL-92870 RHEL-89599 RHEL-92058
 
 * Thu Apr 24 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.15.0-1
 - Update to 22.15.0
 - Drop upstream patches
-  Resolves: RHEL-87319  RHEL-86586
 
 * Tue Apr 22 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.13.1-4
 - Patch fix for sqlite CVE-2025-31498
-  Resolves: RHEL-87319
+  Resolves: RHEL-87320
 
 * Mon Apr 14 2025 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.13.1-3
 - Update c-ares to newest version with fix for CVE-2025-31498
-  Resolves: RHEL-86586
+  Resolves: RHEL-86587
 
 * Mon Mar 03 2025 Andrei Radchenko <aradchen@redhat.com> - 1:22.13.1-2
 - Remove obsolete lua pretransaction script from spec file
   Resolves: RHEL-81119
 - Disable npm update notifications for users
-  Resolves: RHEL-81158
+  Resolves: RHEL-81079
 
 * Thu Jan 30 2025 Jan Staněk <jstanek@redhat.com> - 1:22.13.1-1
 - Update to version 22.13.1
