@@ -2,7 +2,7 @@
 ## (rpmautospec version 0.6.5)
 ## RPMAUTOSPEC: autorelease, autochangelog
 %define autorelease(e:s:pb:n) %{?-p:0.}%{lua:
-    release_number = 1;
+    release_number = 2;
     base_release_number = tonumber(rpm.expand("%{?-b*}%{!?-b:1}"));
     print(release_number + base_release_number - 1);
 }%{?-e:.%{-e*}}%{?-s:.%{-s*}}%{!?-n:%{?dist}}
@@ -13,50 +13,50 @@
 %{load:%{_sourcedir}/nodejs.srpm.macros}
 
 # === Versions of any software shipped in the main nodejs tarball
-%nodejs_define_version node 1:24.13.0-%{autorelease} -p
+%nodejs_define_version node 1:24.14.1-%{autorelease} -p
 
 # The following ones are generated via script;
 # expect anything between the markers to be overwritten on any update.
 
 # BEGIN automatic-version-macros  # DO NOT REMOVE THIS LINE!
-# Version from node-v24.13.0/src/node_version.h
+# Version from node-v24.14.1/src/node_version.h
 %global node_soversion 137
 
-# Version from node-v24.13.0/deps/ada/ada.h
-%nodejs_define_version ada 3.3.0
-# Version from node-v24.13.0/deps/brotli/c/common/version.h
-%nodejs_define_version brotli 1.1.0
-# Version from node-v24.13.0/deps/cares/include/ares_version.h
+# Version from node-v24.14.1/deps/ada/ada.h
+%nodejs_define_version ada 3.4.2
+# Version from node-v24.14.1/deps/brotli/c/common/version.h
+%nodejs_define_version brotli 1.2.0
+# Version from node-v24.14.1/deps/cares/include/ares_version.h
 %nodejs_define_version c_ares 1.34.6
-# Version from node-v24.13.0/deps/histogram/include/hdr/hdr_histogram_version.h
+# Version from node-v24.14.1/deps/histogram/include/hdr/hdr_histogram_version.h
 %nodejs_define_version histogram 0.11.9
-# Version from node-v24.13.0/tools/icu/current_ver.dep
-%nodejs_define_version icu 77.1 -p
-# Version from node-v24.13.0/deps/uv/include/uv/version.h
+# Version from node-v24.14.1/tools/icu/current_ver.dep
+%nodejs_define_version icu 78.2 -p
+# Version from node-v24.14.1/deps/uv/include/uv/version.h
 %nodejs_define_version libuv 1.51.0
-# Version from node-v24.13.0/deps/llhttp/include/llhttp.h
+# Version from node-v24.14.1/deps/llhttp/include/llhttp.h
 %nodejs_define_version llhttp 9.3.0
-# Version from node-v24.13.0/deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%nodejs_define_version nghttp2 1.67.1
-# Version from node-v24.13.0/deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
+# Version from node-v24.14.1/deps/merve/merve.h
+%nodejs_define_version merve 1.0.0
+# Version from node-v24.14.1/deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
+%nodejs_define_version nghttp2 1.68.1
+# Version from node-v24.14.1/deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
 %nodejs_define_version nghttp3 1.6.0
-# Version from node-v24.13.0/deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
+# Version from node-v24.14.1/deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
 %nodejs_define_version ngtcp2 1.11.0
-# Version from node-v24.13.0/deps/cjs-module-lexer/src/package.json
-%nodejs_define_version nodejs-cjs-module-lexer 2.1.0
-# Version from node-v24.13.0/lib/punycode.js
+# Version from node-v24.14.1/lib/punycode.js
 %nodejs_define_version nodejs-punycode 2.1.0
-# Version from node-v24.13.0/deps/undici/src/package.json
-%nodejs_define_version nodejs-undici 7.18.2
-# Version from node-v24.13.0/deps/npm/package.json
-%nodejs_define_version npm 1:11.6.2
-# Version from node-v24.13.0/deps/sqlite/sqlite3.h
-%nodejs_define_version sqlite 3.50.4
-# Version from node-v24.13.0/deps/uvwasi/include/uvwasi.h
+# Version from node-v24.14.1/deps/undici/src/package.json
+%nodejs_define_version nodejs-undici 7.24.4
+# Version from node-v24.14.1/deps/npm/package.json
+%nodejs_define_version npm 1:11.11.0
+# Version from node-v24.14.1/deps/sqlite/sqlite3.h
+%nodejs_define_version sqlite 3.51.2
+# Version from node-v24.14.1/deps/uvwasi/include/uvwasi.h
 %nodejs_define_version uvwasi 0.0.23
-# Version from node-v24.13.0/deps/v8/include/v8-version.h
+# Version from node-v24.14.1/deps/v8/include/v8-version.h
 %nodejs_define_version v8 3:13.6.233.17 -p
-# Version from node-v24.13.0/deps/zlib/zlib.h
+# Version from node-v24.14.1/deps/zlib/zlib.h
 %nodejs_define_version zlib 1.3.1
 # END automatic-version-macros  # DO NOT REMOVE THIS LINE!
 
@@ -119,10 +119,10 @@ BuildRequires:  pkgconfig(openssl) >= 3.0.2
 %nodejs_declare_bundled -a  icu
 %nodejs_declare_bundled -a  libuv
 %nodejs_declare_bundled -a  llhttp
+%nodejs_declare_bundled -a  merve
 %nodejs_declare_bundled -a  nghttp2
 %nodejs_declare_bundled -a  nghttp3
 %nodejs_declare_bundled -a  ngtcp2
-%nodejs_declare_bundled -a  nodejs-cjs-module-lexer
 %nodejs_declare_bundled -a  nodejs-punycode -npunycode
 %nodejs_declare_bundled -a  nodejs-undici
 %nodejs_declare_bundled -a  sqlite      -psqlite3
@@ -144,8 +144,8 @@ Provides:   nodejs(engine) = %{node_version}
 Source:         node-v%{node_version}-stripped.tar.gz
 # Sources 001-099: reserved for additional sources to be installed
 # - Full ICU database data
-Source001:      https://github.com/unicode-org/icu/releases/download/release-%{icu_version_major}-%{icu_version_minor}/icu4c-%{icu_version_major}_%{icu_version_minor}-data-bin-b.zip
-Source002:      https://github.com/unicode-org/icu/releases/download/release-%{icu_version_major}-%{icu_version_minor}/icu4c-%{icu_version_major}_%{icu_version_minor}-data-bin-l.zip
+Source001:      https://github.com/unicode-org/icu/releases/download/release-%{icu_version_major}.%{icu_version_minor}/icu4c-%{icu_version_major}.%{icu_version_minor}-data-bin-b.zip
+Source002:      https://github.com/unicode-org/icu/releases/download/release-%{icu_version_major}.%{icu_version_minor}/icu4c-%{icu_version_major}.%{icu_version_minor}-data-bin-l.zip
 # - Downstream/distribution configuration files
 Source003:      nodejs.pc.in
 Source004:      v8.pc.in
@@ -162,8 +162,8 @@ Source101:      nodejs.srpm.macros
 
 %patchlist
 0001-Remove-unused-OpenSSL-config.patch
-0005-v8-highway-Fix-for-GCC-15-compiler-error-on-PPC8-PPC.patch
 0001-fips-disable-options.patch
+0003-downstream-update-nghttp2-to-1.68.1.patch
 
 %description
 Node.js is a platform built on Chrome's JavaScript runtime
@@ -256,7 +256,7 @@ readonly -a devendored_paths=(
     %{?!with_bundled_brotli:deps/brotli}
     %{?!with_bundled_c_ares:deps/cares}
     %{?!with_bundled_libuv:deps/uv}
-    %{?!with_bundled_nodejs_cjs_module_lexer:deps/cjs-module-lexer}
+    %{?!with_bundled_merve:deps/merve}
     %{?!with_bundled_nodejs_undici:deps/undici}
     %{?!with_bundled_sqlite:deps/sqlite}
     %{?!with_bundled_zlib:deps/zlib}
@@ -311,9 +311,9 @@ readonly -a configure_flags=(
     %{?!with_bundled_libuv:--shared-libuv}
     %{?!with_bundled_sqlite:--shared-sqlite}
     %{?!with_bundled_zlib:--shared-zlib}
-%if %{without bundled_nodejs_cjs_module_lexer}
-    --shared-builtin-cjs_module_lexer/lexer-path=%{nodejs_common_sitelib}/cjs-module-lexer/lexer.js
-    --shared-builtin-cjs_module_lexer/dist/lexer-path=%{nodejs_common_sitelib}/cjs-module-lexer/dist/lexer.js
+%if %{without bundled_merve}
+    --shared-builtin-merve/lexer-path=%{nodejs_common_sitelib}/merve/lexer.js
+    --shared-builtin-merve/dist/lexer-path=%{nodejs_common_sitelib}/merve/dist/lexer.js
 %endif
 %if %{without bundled_nodejs_undici}
     --shared-builtin-undici/undici-path=%{nodejs_common_sitelib}/undici/loader.js
@@ -461,8 +461,12 @@ npm() {
 # === Sanity check for important versions
 node -e 'require("assert").equal(process.versions.node, "%{node_version}")'
 node -e 'require("assert").equal(process.versions.v8.replace(/-node\.\d+$/, ""), "%{v8_version}")'
+%if %{with bundled_c_ares}
 node -e 'require("assert").equal(process.versions.ares.replace(/-DEV$/, ""), "%{c_ares_version}")'
+%endif
+%if %{with bundled_punycode}
 node --no-deprecation -e 'require("assert").equal(require("punycode").version, "%{nodejs_punycode_version}")'
+%endif
 
 npm version --json | jq --exit-status '.npm == "%{npm_version}"'
 
@@ -512,7 +516,7 @@ bash '%{SOURCE10}' "${RPM_BUILD_ROOT}%{_bindir}/node" test/ '%{SOURCE11}'
 %{_libdir}/pkgconfig/v8-%{v8_version_major}.%{v8_version_minor}.pc
 
 %files      full-i18n
-%doc        full-icu/icu4c-%{icu_version_major}_%{icu_version_minor}-data-bin-?-README.md
+%doc        full-icu/icu4c-%{icu_version_major}.%{icu_version_minor}-data-bin-?-README.md
 %license    full-icu/LICENSE
 %dir        %{nodejs_datadir}/
 %{nodejs_datadir}/icudata/
@@ -537,6 +541,12 @@ bash '%{SOURCE10}' "${RPM_BUILD_ROOT}%{_bindir}/node" test/ '%{SOURCE11}'
 
 %changelog
 ## START: Generated by rpmautospec
+* Thu Apr 02 2026 Jan Staněk <jstanek@redhat.com> - 1:24.14.1-2
+- Update bundled nghttp2 to 1.68.1
+
+* Thu Apr 02 2026 Jan Staněk <jstanek@redhat.com> - 1:24.14.1-1
+- Update to version 24.14.1
+
 * Fri Jan 16 2026 tjuhasz <tjuhasz@redhat.com> - 1:24.13.0-1
 - Update to version 24.13.0
 
