@@ -115,14 +115,15 @@ rm -f node-v${version}.tar.gz node-v${version}-stripped.tar.gz
 wget http://nodejs.org/dist/v${version}/node-v${version}.tar.gz \
      http://nodejs.org/dist/v${version}/SHASUMS256.txt
 sha256sum -c SHASUMS256.txt --ignore-missing
+rm SHASUMS256.txt
 tar -zxf node-v${version}.tar.gz
 rm -rf node-v${version}/deps/openssl
 tar -zcf node-v${version}-stripped.tar.gz node-v${version}
 
 # Download the ICU binary data files
-ICU_MAJOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\)-\([[:digit:]]\+\).*/\1/g')
-ICU_MINOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\)-\([[:digit:]]\+\).*/\2/g')
-rm -Rf icu4c-${ICU_MAJOR}_${ICU_MINOR}-data-bin-*.zip
+ICU_MAJOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\).\([[:digit:]]\+\).*/\1/g')
+ICU_MINOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\).\([[:digit:]]\+\).*/\2/g')
+rm -Rf icu4c-${ICU_MAJOR}.${ICU_MINOR}-data-bin-*.zip
 wget $(grep -w 'Source3' nodejs.spec | sed --expression="s/.*http/http/g" --expression="s/\(\%{icu_major}\)/${ICU_MAJOR}/g" --expression="s/\(\%{icu_minor}\)/${ICU_MINOR}/g")
 wget $(grep -w 'Source4' nodejs.spec | sed --expression="s/.*http/http/g" --expression="s/\(\%{icu_major}\)/${ICU_MAJOR}/g" --expression="s/\(\%{icu_minor}\)/${ICU_MINOR}/g")
 
@@ -194,8 +195,8 @@ echo $NGTCP2_VERSION
 echo
 echo "ICU"
 echo "========================="
-ICU_MAJOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\)-\([[:digit:]]\+\).*/\1/g')
-ICU_MINOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\)-\([[:digit:]]\+\).*/\2/g')
+ICU_MAJOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\).\([[:digit:]]\+\).*/\1/g')
+ICU_MINOR=$(jq -r '.[0].url' node-v${version}/tools/icu/current_ver.dep | sed --expression='s/.*release-\([[:digit:]]\+\).\([[:digit:]]\+\).*/\2/g')
 echo "${ICU_MAJOR}.${ICU_MINOR}"
 echo
 echo "simdutf"

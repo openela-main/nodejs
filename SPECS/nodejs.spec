@@ -58,7 +58,7 @@
 %global nodejs_epoch 1
 %global nodejs_major 22
 %global nodejs_minor 22
-%global nodejs_patch 0
+%global nodejs_patch 2
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
 %global nodejs_abi %{nodejs_soversion}
@@ -94,7 +94,7 @@
 %global libuv_version 1.51.0
 
 # nghttp2 - from deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%global nghttp2_version 1.64.0
+%global nghttp2_version 1.68.1
 
 # nghttp3 - from deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
 %global nghttp3_version 1.6.0
@@ -103,8 +103,8 @@
 %global ngtcp2_version 1.11.0
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 77
-%global icu_minor 1
+%global icu_major 78
+%global icu_minor 2
 %global icu_version %{icu_major}.%{icu_minor}
 
 %global icudatadir %{nodejs_datadir}/icudata
@@ -125,7 +125,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.9.4
+%global npm_version 10.9.7
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -142,7 +142,7 @@
 %global histogram_version 0.11.9
 
 # sqlite - from deps/sqlite/sqlite3.h
-%global sqlite_version 3.50.4
+%global sqlite_version 3.51.2
 
 
 Name: nodejs
@@ -164,8 +164,8 @@ Source0: node-v%{nodejs_version}-stripped.tar.gz
 Source1: npmrc
 Source2: btest402.js
 # The binary data that icu-small can use to get icu-full capability
-Source3: https://github.com/unicode-org/icu/releases/download/release-%{icu_major}-%{icu_minor}/icu4c-%{icu_major}_%{icu_minor}-data-bin-b.zip
-Source4: https://github.com/unicode-org/icu/releases/download/release-%{icu_major}-%{icu_minor}/icu4c-%{icu_major}_%{icu_minor}-data-bin-l.zip
+Source3: https://github.com/unicode-org/icu/releases/download/release-%{icu_major}.%{icu_minor}/icu4c-%{icu_major}.%{icu_minor}-data-bin-b.zip
+Source4: https://github.com/unicode-org/icu/releases/download/release-%{icu_major}.%{icu_minor}/icu4c-%{icu_major}.%{icu_minor}-data-bin-l.zip
 Source200: nodejs-tarball.sh
 Source201: npmrc.builtin.in
 Source202: nodejs.pc.in
@@ -175,6 +175,8 @@ Source301: test-should-pass.txt
 
 Patch: 0001-Remove-unused-OpenSSL-config.patch
 Patch: 0003-fips-disable-options.patch
+Patch: 0001-deps-update-nghttp2-to-1.68.1.patch
+Patch: 0001-CVE-2026-25547-braces-expansion.patch
 
 %global pkgname nodejs
 
@@ -327,14 +329,14 @@ Provides: bundled(ada) = 2.9.2
 
 # undici and cjs-module-lexer ship with pre-built WASM binaries.
 %if %{with bundled_cjs_module_lexer}
-Provides: bundled(nodejs-cjs-module-lexer) = 1.2.2
+Provides: bundled(nodejs-cjs-module-lexer) = 2.2.0
 %else
 BuildRequires: nodejs-cjs-module-lexer
 Requires: nodejs-cjs-module-lexer
 %endif
 
 %if %{with bundled_undici}
-Provides: bundled(nodejs-undici) = 6.23.0
+Provides: bundled(nodejs-undici) = 6.24.1
 %else
 BuildRequires: nodejs-undici
 Requires: nodejs-undici
@@ -897,6 +899,14 @@ end
 
 
 %changelog
+* Wed Mar 25 2026 Andrei Radchenko <aradchen@redhat.com> - 1:22.22.2-1
+- Update to version 22.22.2
+- introduced patch updating deps/nghttp2 to v 1.68.1 for CVE-2026-27135
+- disabled failing tests in nghttp2 due to newer version
+- patch for npm/braces CVE-2026-25547
+  Resolves: RHEL-163369
+  Fixes: CVE-2026-1528 CVE-2026-2229 CVE-2026-1526 CVE-2026-1525 CVE-2026-27135 CVE-2026-27904 CVE-2026-26996 CVE-2026-25547
+
 * Tue Jan 13 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.22.0-1
 - Update to 22.22.0
   Resolves: RHEL-141879
