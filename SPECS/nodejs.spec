@@ -44,7 +44,7 @@
 %global nodejs_epoch 1
 %global nodejs_major 20
 %global nodejs_minor 20
-%global nodejs_patch 0
+%global nodejs_patch 2
 %global nodejs_abi %{nodejs_major}.%{nodejs_minor}
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 115
@@ -71,13 +71,13 @@
 %global c_ares_version 1.34.6
 
 # llhttp - from deps/llhttp/include/llhttp.h
-%global llhttp_version 9.3.0
+%global llhttp_version 9.3.1
 
 # libuv - from deps/uv/include/uv/version.h
 %global libuv_version 1.46.0
 
 # nghttp2 - from deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%global nghttp2_version 1.61.0
+%global nghttp2_version 1.68.1
 
 # nghttp3 - from deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
 %global nghttp3_version 0.7.0
@@ -86,8 +86,8 @@
 %global ngtcp2_version 1.1.0
 
 # ICU - from tools/icu/current_ver.dep
-%global icu_major 77
-%global icu_minor 1
+%global icu_major 78
+%global icu_minor 2
 %global icu_version %{icu_major}.%{icu_minor}
 
 %global icudatadir %{nodejs_datadir}/icudata
@@ -156,7 +156,7 @@ ExclusiveArch: %{nodejs_arches}
 Source0: node-v%{nodejs_version}-stripped.tar.gz
 Source1: npmrc
 Source2: btest402.js
-Source3: https://github.com/unicode-org/icu/releases/download/release-%{icu_major}-%{icu_minor}/icu4c-%{icu_major}_%{icu_minor}-src.tgz
+Source3: https://github.com/unicode-org/icu/releases/download/release-%{icu_major}.%{icu_minor}/icu4c-%{icu_major}.%{icu_minor}-sources.tgz
 Source100: %{name}-tarball.sh
 
 # The native module Requires generator remains in the nodejs SRPM, so it knows
@@ -172,17 +172,17 @@ Source8: npmrc.builtin.in
 # Recipes for creating these blobs are included in the sources.
 
 # Version: jq '.version' deps/cjs-module-lexer/src/package.json
-# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/2.1.0.tar.gz
-# Adjustments: rm -f cjs-module-lexer-2.1.0/lib/lexer.wasm
+# Original: https://github.com/nodejs/cjs-module-lexer/archive/refs/tags/2.2.0.tar.gz
+# Adjustments: rm -f cjs-module-lexer-2.2.0/lib/lexer.wasm
 # wasi-sdk version can be found in Makefile
-Source101: cjs-module-lexer-2.1.0.tar.gz
+Source101: cjs-module-lexer-2.2.0.tar.gz
 Source111: https://github.com/WebAssembly/wasi-sdk/archive/refs/tags/wasi-sdk-12.tar.gz
 
 # Version: jq '.version' deps/undici/src/package.json
-# Original: https://github.com/nodejs/undici/archive/v6.23.0/undici-v6.23.0.tar.gz
-# Adjustments: rm -f undici-v6.23.0/lib/llhttp/llhttp*.wasm
+# Original: https://github.com/nodejs/undici/archive/v6.24.1/undici-v6.24.1.tar.gz
+# Adjustments: rm -f undici-6.24.1/lib/llhttp/llhttp*.wasm
 # wasi-sdk version can be found in lib/llhttp/wasm_build_env.txt
-Source102: undici-6.23.0.tar.gz
+Source102: undici-v6.24.1.tar.gz
 Source112: https://github.com/WebAssembly/wasi-sdk/archive/refs/tags/wasi-sdk-20.tar.gz
 Source300: test-runner.sh
 Source301: test-should-pass.txt
@@ -190,6 +190,7 @@ Source301: test-should-pass.txt
 # Disable running gyp on bundled deps we don't use
 Patch1: 0001-Disable-running-gyp-on-shared-deps.patch
 Patch2: 0002-Disable-FIPS-options.patch
+Patch3: 0001-deps-update-nghttp2-to-1.68.1.patch
 
 BuildRequires: make
 BuildRequires: python3-devel
@@ -648,6 +649,12 @@ LD_LIBRARY_PATH=%{buildroot}%{_libdir} \
 
 
 %changelog
+* Wed Apr 1 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:20.20.2-1
+- Update to version 20.20.2
+  Patch nghttp2 to version 1.68.1 and disable tests which would fail due to this change.
+  Resolves: RHEL-164336
+  Fixes:  CVE-2026-27135 CVE-2026-27904 CVE-2026-26996 CVE-2026-25547 CVE-2026-21710
+
 * Wed Jan 14 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:20.20.0-1
 - Update to version 20.20.0
   Resolves: RHEL-141917
