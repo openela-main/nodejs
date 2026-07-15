@@ -1,4 +1,4 @@
-86c22b4fe9db681ea9cbf5975157c53f0f965b5a6b0b3c70558f0c5c78bfc04a SOURCES/icu4c-78.2-data-bin-b.zip
-6fc51a8818242bfd83207ab89551166ac2fb4bf502d01e41cddc8cb6a0ba4cda SOURCES/icu4c-78.2-data-bin-l.zip
-e843d4bd9be74d24b1f31a0892d9319586b13a0f8090f195a72dd5058d455450 SOURCES/node-v24.14.1-stripped.tar.gz
-232d2ada947c98ce0a7c589a33c0944e84101611576dacc954cb21470ecb3114 SOURCES/packaging-scripts.tar.gz
+cb751fc5d46e218b6c71d69d9dea7ba98da937e2e41b662ad8313c9363d8b7e2 SOURCES/icu4c-78.3-data-bin-b.zip
+982619632b78887f1895b063e96e8c3cc7f99283337c8abbd05aa71635de613c SOURCES/icu4c-78.3-data-bin-l.zip
+7fe43703c826af55ce979fcb55090a9781815fb2c576b1ef3e68548980be1aff SOURCES/node-v24.18.0-stripped.tar.gz
+e998bea16bec2df7a20fc14df912a9c80f436fe06d3696739ed9ee2d6c327e2b SOURCES/packaging-scripts.tar.gz
