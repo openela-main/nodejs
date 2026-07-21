@@ -78,8 +78,8 @@
 # than a Fedora release lifecycle.
 %global nodejs_epoch 1
 %global nodejs_major 22
-%global nodejs_minor 22
-%global nodejs_patch 2
+%global nodejs_minor 23
+%global nodejs_patch 1
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
 %global nodejs_abi %{nodejs_soversion}
@@ -109,13 +109,13 @@
 %global c_ares_version 1.34.6
 
 # llhttp - from deps/llhttp/include/llhttp.h
-%global llhttp_version 9.3.0
+%global llhttp_version 9.4.2
 
 # libuv - from deps/uv/include/uv/version.h
 %global libuv_version 1.51.0
 
 # nghttp2 - from deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%global nghttp2_version 1.68.1
+%global nghttp2_version 1.69.0
 
 # nghttp3 - from deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
 %global nghttp3_version 1.6.0
@@ -146,7 +146,7 @@
 
 # npm - from deps/npm/package.json
 %global npm_epoch 1
-%global npm_version 10.9.7
+%global npm_version 10.9.8
 
 # In order to avoid needing to keep incrementing the release version for the
 # main package forever, we will just construct one for npm that is guaranteed
@@ -162,11 +162,11 @@
 # histogram_c - assumed from timestamps
 %global histogram_version 0.11.9
 
-# sqlite - from deps/sqlite/sqlite3.h
-%global sqlite_version 3.51.2
+# sqlite – from deps/sqlite/sqlite3.h
+%global sqlite_version 3.51.3
 
 # Version: jq '.version' deps/undici/src/package.json
-%global undici_version 6.24.1
+%global undici_version 6.27.0
 
 
 Name: nodejs
@@ -210,8 +210,8 @@ Source201: cjs-module-lexer-2.2.0.tar.gz
 # Version source (cjs-module-lexer tarball): Makefile
 Source202: https://github.com/WebAssembly/wasi-sdk/archive/wasi-sdk-12/wasi-sdk-wasi-sdk-12.tar.gz
 
-# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.24.1.tar.gz
-# Adjustments: rm -f undici-6.24.1/lib/llhttp/llhttp*wasm*
+# Original: https://github.com/nodejs/undici/archive/refs/tags/v6.27.0.tar.gz
+# Adjustments: rm -f undici-6.27.0/lib/llhttp/llhttp*wasm*
 Source211: undici-%{undici_version}.tar.gz
 
 # The WASM blob was made using wasi-sdk v16; compiler libraries are linked in.
@@ -223,8 +223,9 @@ Source301: test-should-pass.txt
 
 Patch1: 0001-Remove-unused-OpenSSL-config.patch
 Patch2: 0002-fips-disable-options.patch
-Patch3: 0001-deps-update-nghttp2-to-1.68.1.patch
-Patch4: 0001-CVE-2026-25547-braces-expansion.patch
+Patch3: 0001-CVE-2026-25547-braces-expansion.patch
+# npm deps patches
+Patch4: 0002-CVE-2026-42338-npm-ip-address-security-fix.patch
 
 %global pkgname nodejs
 
@@ -385,7 +386,7 @@ Requires: nodejs-cjs-module-lexer
 %endif
 
 %if %{with bundled_undici}
-Provides: bundled(nodejs-undici) = 6.24.1
+Provides: bundled(nodejs-undici) = 6.27.0
 %else
 BuildRequires: nodejs-undici
 Requires: nodejs-undici
@@ -956,6 +957,11 @@ end
 
 
 %changelog
+* Wed Jun 24 2026 Andrei Radchenko <aradchen@redhat.com> - 1:22.23.1-1
+- Update to version 22.23.1
+  Resolves: RHEL-176170
+  Fixes: CVE-2026-12151 CVE-2026-48618 CVE-2026-48933 CVE-2026-48937 CVE-2026-48930 CVE-2026-48619 CVE-2026-48615 CVE-2026-48934 CVE-2026-48928 CVE-2026-48617 CVE-2026-48931 CVE-2026-48935 CVE-2026-42338
+
 * Wed Mar 25 2026 Andrei Radchenko <aradchen@redhat.com> - 1:22.22.2-1
 - Update to version 22.22.2
   Resolves: RHEL-154019
