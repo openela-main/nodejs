@@ -3,7 +3,7 @@
 %{load:%{_sourcedir}/nodejs.srpm.macros}
 
 # === Versions of any software shipped in the main nodejs tarball
-%nodejs_define_version node 1:24.18.0-1%{?dist} -p
+%nodejs_define_version node 1:24.18.0-2%{?dist} -p
 
 # The following ones are generated via script;
 # expect anything between the markers to be overwritten on any update.
@@ -159,6 +159,12 @@ Source101:      nodejs.srpm.macros
 
 Patch0001: 0001-Remove-unused-OpenSSL-config.patch
 Patch0002: 0002-fips-disable-options.patch
+# Sourced from:
+# https://github.com/nodejs/node/commit/fd350185539242b7d383ebf38f6041f10b472b39
+Patch0003: 0001-CVE-2026-59873-CVE-2026-59874-upgrade-bundled-tar-to-7.5.19.patch
+# Sourced from:
+# https://github.com/juliangruber/brace-expansion/commit/c7e33ec13ac1a684c116720843ce24e208611754
+Patch0004: 0001-CVE-2026-13149-Brace-Expansion-DOS.patch
 
 %description
 Node.js is a platform built on Chrome's JavaScript runtime
@@ -540,6 +546,11 @@ bash '%{SOURCE10}' "${RPM_BUILD_ROOT}%{_bindir}/node" test/ '%{SOURCE11}' || :
 %{_pkgdocdir}/npm/
 
 %changelog
+* Wed Jul 22 2026 Jan Staněk <jstanek@redhat.com> - 1:24.18.0-2
+- Backport patches for various CVEs
+  Fixes: CVE-2026-59873 CVE-2026-59874 CVE-2026-13149
+  Resolves: RHEL-194176 RHEL-194179 RHEL-208658
+
 * Tue Jun 30 2026 Jan Staněk <jstanek@redhat.com> - 1:24.18.0-1
 - Update to version 24.18.0
   Resolves: RHEL-168744
