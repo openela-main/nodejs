@@ -67,7 +67,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 1
+%global baserelease 2
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -226,6 +226,8 @@ Patch2: 0002-fips-disable-options.patch
 Patch3: 0001-CVE-2026-25547-braces-expansion.patch
 # npm deps patches
 Patch4: 0002-CVE-2026-42338-npm-ip-address-security-fix.patch
+Patch5: 0003-CVE-2026-59873-CVE-2026-59874-upgrade-bundled-tar-to-7.5.19.patch
+Patch6: 0004-CVE-2026-13149-brace-expansion-unbound-recursion.patch
 
 %global pkgname nodejs
 
@@ -957,6 +959,11 @@ end
 
 
 %changelog
+* Thu Jul 23 2026 Jan Staněk <jstanek@redhat.com> - 1:22.23.1-2
+- Backport patches for various CVEs
+  Fixes: CVE-2026-59873 CVE-2026-59874 CVE-2026-13149
+  Resolves: RHEL-193842 RHEL-193874 RHEL-208661
+
 * Wed Jun 24 2026 Andrei Radchenko <aradchen@redhat.com> - 1:22.23.1-1
 - Update to version 22.23.1
   Resolves: RHEL-176170
