@@ -3,7 +3,7 @@
 %{load:%{_sourcedir}/nodejs.srpm.macros}
 
 # === Versions of any software shipped in the main nodejs tarball
-%nodejs_define_version node 1:24.18.0-2%{?dist} -p
+%nodejs_define_version node 1:24.18.0-3%{?dist} -p
 
 # The following ones are generated via script;
 # expect anything between the markers to be overwritten on any update.
@@ -41,7 +41,7 @@
 # Version from node-v24.18.0/deps/npm/package.json
 %nodejs_define_version npm 1:11.16.0
 # Version from node-v24.18.0/deps/sqlite/sqlite3.h
-%nodejs_define_version sqlite 3.53.1
+%nodejs_define_version sqlite 3.53.4
 # Version from node-v24.18.0/deps/uvwasi/include/uvwasi.h
 %nodejs_define_version uvwasi 0.0.23
 # Version from node-v24.18.0/deps/v8/include/v8-version.h
@@ -162,9 +162,11 @@ Patch0002: 0002-fips-disable-options.patch
 # Sourced from:
 # https://github.com/nodejs/node/commit/fd350185539242b7d383ebf38f6041f10b472b39
 Patch0003: 0001-CVE-2026-59873-CVE-2026-59874-upgrade-bundled-tar-to-7.5.19.patch
-# Sourced from:
-# https://github.com/juliangruber/brace-expansion/commit/c7e33ec13ac1a684c116720843ce24e208611754
-Patch0004: 0001-CVE-2026-13149-Brace-Expansion-DOS.patch
+Patch0004: 0001-update-sqlite-to-3.53.4.patch
+# ip-address rebase
+Patch0005: 0001-CVE-2026-69192-CVE-2026-54272-ip-address-10.4.0.patch
+# brace-expansion rebase
+Patch0006: 0001-CVE-2026-69152-brace-expansion-5.0.9.patch 
 
 %description
 Node.js is a platform built on Chrome's JavaScript runtime
@@ -546,6 +548,17 @@ bash '%{SOURCE10}' "${RPM_BUILD_ROOT}%{_bindir}/node" test/ '%{SOURCE11}' || :
 %{_pkgdocdir}/npm/
 
 %changelog
+* Wed Aug 5 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:24.18.0-3
+- deps: update npm/ip-address to 10.4.0 
+- deps: update npm/brace-expansion to 5.9.0 
+  Fix: CVE-2026-69192 & CVE-2026-54272 CVE-2026-69152
+  Resolves: RHEL-223388 RHEL-223907 RHEL-223792
+
+* Tue Aug 04 2026 Andrei Radchenko <aradchen@redhat.com> - 1:24.18.0-3
+- Backport patch update sqlite to 3.53.4
+  Fixes: CVE-2026-11824, CVE-2026-11822
+  Resolves: RHEL-218252 RHEL-218257
+
 * Wed Jul 22 2026 Jan Staněk <jstanek@redhat.com> - 1:24.18.0-2
 - Backport patches for various CVEs
   Fixes: CVE-2026-59873 CVE-2026-59874 CVE-2026-13149
