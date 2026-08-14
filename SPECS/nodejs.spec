@@ -67,7 +67,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 2
+%global baserelease 3
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -163,7 +163,7 @@
 %global histogram_version 0.11.9
 
 # sqlite – from deps/sqlite/sqlite3.h
-%global sqlite_version 3.51.3
+%global sqlite_version 3.53.4
 
 # Version: jq '.version' deps/undici/src/package.json
 %global undici_version 6.27.0
@@ -223,12 +223,14 @@ Source301: test-should-pass.txt
 
 Patch1: 0001-Remove-unused-OpenSSL-config.patch
 Patch2: 0002-fips-disable-options.patch
-Patch3: 0001-CVE-2026-25547-braces-expansion.patch
 # npm deps patches
-Patch4: 0002-CVE-2026-42338-npm-ip-address-security-fix.patch
-Patch5: 0003-CVE-2026-59873-CVE-2026-59874-upgrade-bundled-tar-to-7.5.19.patch
-Patch6: 0004-CVE-2026-13149-brace-expansion-unbound-recursion.patch
-
+Patch3: 0003-CVE-2026-59873-CVE-2026-59874-upgrade-bundled-tar-to-7.5.19.patch
+# CVE-2026-11824 and CVE-2026-11822
+Patch4: 0001-update-sqlite-to-3.53.4.patch
+# CVE-2026-69192-CVE-2026-54272 within deps/npm/../ip-address
+Patch5: 0001-CVE-2026-69192-CVE-2026-54272-ip-address-10.4.0.patch 
+# Brace-expansion rebase to 2.1.4
+Patch6: 0001-CVE-2026-69152-brace-expansion-2.1.4.patch 
 %global pkgname nodejs
 
 BuildRequires: make
@@ -959,6 +961,16 @@ end
 
 
 %changelog
+* Wed Aug 5 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.23.1-3
+- deps: update npm/ip-address to 10.4.0 
+- deps: update npm/brace-expansion to 2.1.4
+  Fix: CVE-2026-69192 & CVE-2026-54272 CVE-2026-69152
+
+* Fri Jul 31 2026 Andrei Radchenko <aradchen@redhat.com> - 1:22.23.1-3
+- Backport patch: update sqlite to 3.53.4
+  Fix: CVE-2026-11824, CVE-2026-11822
+  Resolves: RHEL-224135 RHEL-224144
+
 * Thu Jul 23 2026 Jan Staněk <jstanek@redhat.com> - 1:22.23.1-2
 - Backport patches for various CVEs
   Fixes: CVE-2026-59873 CVE-2026-59874 CVE-2026-13149
