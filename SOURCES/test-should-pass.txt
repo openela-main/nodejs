@@ -7,7 +7,6 @@
 # Each exception should be explained with a comment
 # containing date and a short description of the problem
 #
-wasm-allocation/test-wasm-allocation.js
 node-api/test_threadsafe_function/uncaught_exception.js
 pummel/test-heapsnapshot-near-heap-limit-by-api.js
 pummel/test-heapdump-fs-promise.js
