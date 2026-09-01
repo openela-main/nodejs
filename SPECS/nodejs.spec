@@ -46,7 +46,7 @@
 # This is used by both the nodejs package and the npm subpackage that
 # has a separate version - the name is special so that rpmdev-bumpspec
 # will bump this rather than adding .1 to the end.
-%global baserelease 3
+%global baserelease 1
 
 %{?!_pkgdocdir:%global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
@@ -58,7 +58,7 @@
 %global nodejs_epoch 1
 %global nodejs_major 22
 %global nodejs_minor 23
-%global nodejs_patch 1
+%global nodejs_patch 2
 # nodejs_soversion - from NODE_MODULE_VERSION in src/node_version.h
 %global nodejs_soversion 127
 %global nodejs_abi %{nodejs_soversion}
@@ -88,7 +88,7 @@
 %global c_ares_version 1.34.6
 
 # llhttp - from deps/llhttp/include/llhttp.h
-%global llhttp_version 9.4.2
+%global llhttp_version 9.4.3
 
 # libuv - from deps/uv/include/uv/version.h
 %global libuv_version 1.51.0
@@ -339,7 +339,7 @@ Requires: nodejs-cjs-module-lexer
 %endif
 
 %if %{with bundled_undici}
-Provides: bundled(nodejs-undici) = 6.27.0
+Provides: bundled(nodejs-undici) = 6.28.0
 %else
 BuildRequires: nodejs-undici
 Requires: nodejs-undici
@@ -902,6 +902,11 @@ end
 
 
 %changelog
+* Mon Aug 10 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.23.2-1
+- Update to version 22.23.2
+  Fixes: CVE-2026-56846 CVE-2026-56848 CVE-2026-58043
+  Resolves: RHEL-234381 RHEL-234831 RHEL-234896
+
 * Wed Aug 5 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:22.23.1-3
 - deps: update npm/ip-address to 10.4.0 
 - deps: update npm/brace-expansion to 2.1.4 
