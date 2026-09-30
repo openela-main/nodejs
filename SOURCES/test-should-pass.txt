@@ -1278,7 +1278,6 @@ parallel/test-net-connect-buffer2.js
 parallel/test-http-response-statuscode.js
 parallel/test-http-client-abort-keep-alive-destroy-res.js
 parallel/test-event-emitter-listener-count.js
-parallel/test-http2-premature-close.js
 parallel/test-tls-connect-given-socket.js
 parallel/test-async-hooks-run-in-async-scope-caught-exception.js
 parallel/test-worker-message-port-transfer-target.js
@@ -1502,7 +1501,6 @@ parallel/test-worker-nearheaplimit-deadlock.js
 parallel/test-http2-max-concurrent-streams.js
 parallel/test-http2-padding-aligned.js
 parallel/test-diagnostics-channel-tracing-channel-sync-early-exit.js
-parallel/test-http2-invalid-last-stream-id.js
 parallel/test-tls-ecdh.js
 parallel/test-process-cpuUsage.js
 parallel/test-dgram-send-empty-packet.js
