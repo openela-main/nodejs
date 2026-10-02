@@ -3,50 +3,50 @@
 %{load:%{_sourcedir}/nodejs.srpm.macros}
 
 # === Versions of any software shipped in the main nodejs tarball
-%nodejs_define_version node 1:24.19.0-1%{?dist} -p
+%nodejs_define_version node 1:24.21.0-1%{?dist} -p
 
 # The following ones are generated via script;
 # expect anything between the markers to be overwritten on any update.
 
 # BEGIN automatic-version-macros  # DO NOT REMOVE THIS LINE!
-# Version from node-v24.19.0/src/node_version.h
+# Version from node-v24.21.0/src/node_version.h
 %global node_soversion 137
 
-# Version from node-v24.19.0/deps/ada/ada.h
-%nodejs_define_version ada 3.4.4
-# Version from node-v24.19.0/deps/brotli/c/common/version.h
+# Version from node-v24.21.0/deps/ada/ada.h
+%nodejs_define_version ada 4.0.0
+# Version from node-v24.21.0/deps/brotli/c/common/version.h
 %nodejs_define_version brotli 1.2.0
-# Version from node-v24.19.0/deps/cares/include/ares_version.h
-%nodejs_define_version c_ares 1.34.6
-# Version from node-v24.19.0/deps/histogram/include/hdr/hdr_histogram_version.h
-%nodejs_define_version histogram 0.11.9
-# Version from node-v24.19.0/tools/icu/current_ver.dep
+# Version from node-v24.21.0/deps/cares/include/ares_version.h
+%nodejs_define_version c_ares 1.34.8
+# Version from node-v24.21.0/deps/histogram/include/hdr/hdr_histogram_version.h
+%nodejs_define_version histogram 0.11.10
+# Version from node-v24.21.0/tools/icu/current_ver.dep
 %nodejs_define_version icu 78.3 -p
-# Version from node-v24.19.0/deps/uv/include/uv/version.h
+# Version from node-v24.21.0/deps/uv/include/uv/version.h
 %nodejs_define_version libuv 1.52.1
-# Version from node-v24.19.0/deps/llhttp/include/llhttp.h
+# Version from node-v24.21.0/deps/llhttp/include/llhttp.h
 %nodejs_define_version llhttp 9.4.3
-# Version from node-v24.19.0/deps/merve/merve.h
+# Version from node-v24.21.0/deps/merve/merve.h
 %nodejs_define_version merve 1.2.2
-# Version from node-v24.19.0/deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
-%nodejs_define_version nghttp2 1.69.0
-# Version from node-v24.19.0/deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
-%nodejs_define_version nghttp3 1.14.0
-# Version from node-v24.19.0/deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
-%nodejs_define_version ngtcp2 1.15.1
-# Version from node-v24.19.0/lib/punycode.js
+# Version from node-v24.21.0/deps/nghttp2/lib/includes/nghttp2/nghttp2ver.h
+%nodejs_define_version nghttp2 1.70.0
+# Version from node-v24.21.0/deps/ngtcp2/nghttp3/lib/includes/nghttp3/version.h
+%nodejs_define_version nghttp3 1.18.0
+# Version from node-v24.21.0/deps/ngtcp2/ngtcp2/lib/includes/ngtcp2/version.h
+%nodejs_define_version ngtcp2 1.25.0
+# Version from node-v24.21.0/lib/punycode.js
 %nodejs_define_version nodejs-punycode 2.1.0
-# Version from node-v24.19.0/deps/undici/src/package.json
-%nodejs_define_version nodejs-undici 7.29.0
-# Version from node-v24.19.0/deps/npm/package.json
-%nodejs_define_version npm 1:11.17.0
-# Version from node-v24.19.0/deps/sqlite/sqlite3.h
+# Version from node-v24.21.0/deps/undici/src/package.json
+%nodejs_define_version nodejs-undici 7.29.1
+# Version from node-v24.21.0/deps/npm/package.json
+%nodejs_define_version npm 1:11.19.0
+# Version from node-v24.21.0/deps/sqlite/sqlite3.h
 %nodejs_define_version sqlite 3.53.4
-# Version from node-v24.19.0/deps/uvwasi/include/uvwasi.h
+# Version from node-v24.21.0/deps/uvwasi/include/uvwasi.h
 %nodejs_define_version uvwasi 0.0.23
-# Version from node-v24.19.0/deps/v8/include/v8-version.h
+# Version from node-v24.21.0/deps/v8/include/v8-version.h
 %nodejs_define_version v8 3:13.6.233.17 -p
-# Version from node-v24.19.0/deps/zlib/zlib.h
+# Version from node-v24.21.0/deps/zlib/zlib.h
 %nodejs_define_version zlib 1.3.2.1-motley
 # END automatic-version-macros  # DO NOT REMOVE THIS LINE!
 
@@ -111,7 +111,7 @@ BuildRequires:  python3.8dist(setuptools), python3.8dist(jinja2)
 BuildRequires:  pkgconfig(openssl) >= 1.1.1
 %nodejs_declare_bundled -a  ada
 %nodejs_declare_bundled -a  brotli      -plibbrotlidec,libbrotlienc
-%nodejs_declare_bundled -a  c-ares
+%nodejs_declare_bundled -a  c-ares      -sc-ares-devel
 %nodejs_declare_bundled -a  histogram
 %nodejs_declare_bundled -a  icu
 %nodejs_declare_bundled -a  libuv
@@ -159,14 +159,8 @@ Source101:      nodejs.srpm.macros
 
 Patch0001: 0001-Remove-unused-OpenSSL-config.patch
 Patch0002: 0002-fips-disable-options.patch
-# Sourced from:
-# https://github.com/nodejs/node/commit/fd350185539242b7d383ebf38f6041f10b472b39
-Patch0003: 0001-CVE-2026-59873-CVE-2026-59874-upgrade-bundled-tar-to-7.5.19.patch
-Patch0004: 0001-update-sqlite-to-3.53.4.patch
 # ip-address rebase
-Patch0005: 0001-CVE-2026-69192-CVE-2026-54272-ip-address-10.4.0.patch
-# brace-expansion rebase
-Patch0006: 0001-CVE-2026-69152-brace-expansion-5.0.9.patch 
+Patch0005: 0001-CVE-2026-69192-CVE-2026-54272-ip-address-10.4.0.patch 
 
 %description
 Node.js is a platform built on Chrome's JavaScript runtime
@@ -546,6 +540,11 @@ bash '%{SOURCE10}' "${RPM_BUILD_ROOT}%{_bindir}/node" test/ '%{SOURCE11}' || :
 %{_pkgdocdir}/npm/
 
 %changelog
+* Mon Sep 21 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:24.21.0-1
+- Update to version 24.21.0
+  Fix: CVE-2026-85152 CVE-2026-84961 CVE-2026-19534
+  Resolves: RHEL-255252 RHEL-255291 RHEL-255313 RHEL-249188
+
 * Wed Aug 5 2026 Tomas Juhasz <tjuhasz@redhat.com> - 1:24.18.0-3
 - deps: update npm/ip-address to 10.4.0 
 - deps: update npm/brace-expansion to 5.9.0 
