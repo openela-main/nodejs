@@ -1,4 +1,4 @@
-From bfdd2d2d6433c8abb8b05e6ac616f748a500f2ee Mon Sep 17 00:00:00 2001
+From 39c94f54a2332f840ad5ae833a5420f14ebc6f3a Mon Sep 17 00:00:00 2001
 From: Michael Dawson <midawson@redhat.com>
 Date: Fri, 23 Feb 2024 13:43:56 +0100
 Subject: [PATCH] Disable FIPS options
@@ -22,7 +22,7 @@ Signed-off-by: rpm-build <rpm-build>
  3 files changed, 20 insertions(+)
 
 diff --git a/lib/crypto.js b/lib/crypto.js
-index ac4b0a3..74f3034 100644
+index 3e720cd..523745a 100644
 --- a/lib/crypto.js
 +++ b/lib/crypto.js
 @@ -36,6 +36,9 @@ const {
@@ -35,7 +35,7 @@ index ac4b0a3..74f3034 100644
    ERR_CRYPTO_FIPS_FORCED,
    ERR_WORKER_UNSUPPORTED_OPERATION,
  } = require('internal/errors').codes;
-@@ -255,6 +258,13 @@ function getFips() {
+@@ -267,6 +270,13 @@ function getFips() {
  }
  
  function setFips(val) {
@@ -50,10 +50,10 @@ index ac4b0a3..74f3034 100644
      if (val) return;
      throw new ERR_CRYPTO_FIPS_FORCED();
 diff --git a/lib/internal/errors.js b/lib/internal/errors.js
-index 01f05a5..2a8f8b7 100644
+index 4da0121..fc3a69c 100644
 --- a/lib/internal/errors.js
 +++ b/lib/internal/errors.js
-@@ -1114,6 +1114,12 @@ module.exports = {
+@@ -1119,6 +1119,12 @@ module.exports = {
  //
  // Note: Node.js specific errors must begin with the prefix ERR_
  
@@ -67,10 +67,10 @@ index 01f05a5..2a8f8b7 100644
    function(msg, permission = '', resource = '') {
      this.permission = permission;
 diff --git a/src/crypto/crypto_util.cc b/src/crypto/crypto_util.cc
-index 3f5f70b..1d09aeb 100644
+index 19a0877..00d6623 100644
 --- a/src/crypto/crypto_util.cc
 +++ b/src/crypto/crypto_util.cc
-@@ -117,6 +117,10 @@ std::optional<std::string> ProcessFipsOptions() {
+@@ -466,6 +466,10 @@ std::optional<std::string> ProcessFipsOptions() {
    }
  #endif
  
@@ -82,5 +82,5 @@ index 3f5f70b..1d09aeb 100644
    if (!ncrypto::setFipsEnabled(true, &errors)) {
      std::string error = "OpenSSL error when trying to enable FIPS";
 -- 
-2.55.0
+2.56.0
 
