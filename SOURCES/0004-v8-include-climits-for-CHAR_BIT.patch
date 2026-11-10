@@ -1,0 +1,18 @@
+From: Andrei Radchenko <andrei@redhat.com>
+Subject: [PATCH] v8: include climits for CHAR_BIT in memcopy.h
+
+CHAR_BIT is used in the NEON-optimized SimdMemCopy path on aarch64
+but <climits> is not included, causing build failure.
+
+diff --git a/deps/v8/src/base/memcopy.h b/deps/v8/src/base/memcopy.h
+index 1111111..2222222 100644
+--- a/deps/v8/src/base/memcopy.h
++++ b/deps/v8/src/base/memcopy.h
+@@ -7,6 +7,7 @@
+
+ #include <stdlib.h>
+
++#include <climits>
+ #include <atomic>
+
+ #include "include/v8config.h"

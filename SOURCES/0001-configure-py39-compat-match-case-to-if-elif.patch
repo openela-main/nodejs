@@ -1,0 +1,38 @@
+From 00be1d93e3c09d3498da9b92bee584e2c3b49847 Mon Sep 17 00:00:00 2001
+From: Andrei Radchenko <aradchen@redhat.com>
+Date: Tue, 26 May 2026 13:47:13 +0200
+Subject: [PATCH] configure: Python 3.9 compat - replace match/case with
+ if/elif
+
+match/case requires Python 3.10+; RHEL 8/9 ship Python 3.8/3.9.
+
+---
+ configure.py | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/configure.py b/configure.py
+index a2dcd202..65592bcd 100755
+--- a/configure.py
++++ b/configure.py
+@@ -2172,12 +2172,11 @@ def configure_v8(o, configs):
+   # Refs: https://github.com/nodejs/node/issues/62676
+   if (not options.v8_disable_temporal_support and not options.v8_enable_temporal_support):
+-    match options.with_intl:
+-      case 'none':
+-        warn('Temporal support disabled when compiling without ICU')
+-        options.v8_disable_temporal_support = True
+-      case 'system-icu':
+-        warn('Temporal support disabled when compiling with a shared ICU library')
+-        options.v8_disable_temporal_support = True
++    if options.with_intl == 'none':
++      warn('Temporal support disabled when compiling without ICU')
++      options.v8_disable_temporal_support = True
++    elif options.with_intl == 'system-icu':
++      warn('Temporal support disabled when compiling with a shared ICU library')
++      options.v8_disable_temporal_support = True
+   o['variables']['v8_enable_temporal_support'] = 0 if options.v8_disable_temporal_support else 1
+   o['variables']['v8_trace_maps'] = 1 if options.trace_maps else 0
+   o['variables']['node_use_v8_platform'] = b(not options.without_v8_platform)
+--
+2.54.0
+
