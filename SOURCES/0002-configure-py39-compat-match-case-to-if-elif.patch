@@ -14,7 +14,8 @@ diff --git a/configure.py b/configure.py
 index a2dcd202..65592bcd 100755
 --- a/configure.py
 +++ b/configure.py
-@@ -2172,12 +2172,11 @@ def configure_v8(o, configs):
+@@ -2214,13 +2214,12 @@ def configure_v8(o, configs):
+   # if auto-detecting, warn and disable Temporal in those cases.
    # Refs: https://github.com/nodejs/node/issues/62676
    if (not options.v8_disable_temporal_support and not options.v8_enable_temporal_support):
 -    match options.with_intl:
@@ -32,7 +33,7 @@ index a2dcd202..65592bcd 100755
 +      options.v8_disable_temporal_support = True
    o['variables']['v8_enable_temporal_support'] = 0 if options.v8_disable_temporal_support else 1
    o['variables']['v8_trace_maps'] = 1 if options.trace_maps else 0
-   o['variables']['node_use_v8_platform'] = b(not options.without_v8_platform)
+   o['variables']['v8_use_perfetto'] = 1 if options.with_perfetto else 0
 --
 2.54.0
 
