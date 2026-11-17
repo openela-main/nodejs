@@ -3,7 +3,7 @@
 %{load:%{_sourcedir}/nodejs.srpm.macros}
 
 # === Versions of any software shipped in the main nodejs tarball
-%nodejs_define_version node 1:24.22.1-1%{?dist} -p
+%nodejs_define_version node 1:24.22.1-2%{?dist} -p
 
 # The following ones are generated via script;
 # expect anything between the markers to be overwritten on any update.
@@ -41,7 +41,7 @@
 # Version from node-v24.22.1/deps/npm/package.json
 %nodejs_define_version npm 1:11.19.1
 # Version from node-v24.22.1/deps/sqlite/sqlite3.h
-%nodejs_define_version sqlite 3.53.4
+%nodejs_define_version sqlite 3.54.1
 # Version from node-v24.22.1/deps/uvwasi/include/uvwasi.h
 %nodejs_define_version uvwasi 0.0.23
 # Version from node-v24.22.1/deps/v8/include/v8-version.h
@@ -164,6 +164,10 @@ Patch0003: 0001-deps-update-brace-expansion-to-5.0.12.patch
 Patch0004: 0001-npm-update-brace-expansion-to-5.0.12.patch
 # CVE-2026-101911 - ip-address 10.5.0 -> 10.7.4 (npm bundled dep)
 Patch0005: 0001-npm-update-ip-address-to-10.7.4.patch
+# undici CVE fixes for the copy bundled in npm
+Patch0006: 0001-npm-update-undici-to-6.29.1.patch
+# sqlite CVE fixes
+Patch0007: 0001-deps-update-sqlite-to-3.54.1.patch
 
 %description
 Node.js is a platform built on Chrome's JavaScript runtime
@@ -543,6 +547,10 @@ bash '%{SOURCE10}' "${RPM_BUILD_ROOT}%{_bindir}/node" test/ '%{SOURCE11}' || :
 %{_pkgdocdir}/npm/
 
 %changelog
+* Thu Nov 05 2026 Jan Staněk <jstanek@redhat.com> - 1:24.22.1-2
+- Update bundled sqlite to 3.54.1
+  Resolves: RHEL-297222 RHEL-297131 RHEL-297050
+
 * Tue Oct 27 2026 Jan Staněk <jstanek@redhat.com> - 1:24.22.1-1
 - Update to version 24.22.1
   Resolves: RHEL-289763
