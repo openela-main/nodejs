@@ -1,0 +1,28 @@
+From 1234567890abcdef1234567890abcdef12345678 Mon Sep 17 00:00:00 2001
+From: Andrei Radchenko <aradchen@redhat.com>
+Date: Tue, 27 May 2026 14:00:00 +0200
+Subject: [PATCH] configure: Python 3.8 compat - replace dict merge operator
+
+Dict merge operator (|) requires Python 3.9+; RHEL 8 ships Python 3.8.
+
+---
+ configure.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.py b/configure.py
+--- a/configure.py
++++ b/configure.py
+@@ -3019,9 +3019,9 @@ config_release_vars = configurations['Release']['variables']
+ config_debug_vars = configurations['Debug']['variables']
+ del configurations['Debug']['variables']
+ if options.debug:
+-  variables = variables | config_debug_vars
++  variables.update(config_debug_vars)
+ else:
+-  variables = variables | config_release_vars
++  variables.update(config_release_vars)
+
+ # make_global_settings should be a root level element too
+ if 'make_global_settings' in output:
+--
+2.54.0
